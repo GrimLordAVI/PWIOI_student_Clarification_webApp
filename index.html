@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PW student to Student ONLY</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #11051b;
+            position: relative;
+        }
+        #content-wrapper {
+            position: relative;
+            z-index: 10;
+            background-color: transparent; 
+        }
+    </style>
+</head>
+<body class="min-h-screen text-white antialiased flex flex-col">
+    <canvas id="math-background" class="fixed inset-0 z-0"></canvas>
+
+    <div id="content-wrapper" class="flex-grow flex flex-col min-h-screen">
+        <!-- Header for both pages -->
+        <header class="w-full max-w-7xl mx-auto px-4 py-6" style="width: 100vw; display: flex; justify-content: center; align-items: center; background-color: rgba(34, 14, 51, 0.2); backdrop-filter: blur(10px); border-radius: 5%; ">
+            <div class="flex items-center space-x-2" >
+                <h1 class="text-xl font-bold"><a href="index.html">PW student to Student ONLY</a></h1>
+            </div>
+            
+        </header>
+
+        
+        <main id="main-content" class="flex-grow w-full max-w-7xl mx-auto px-4 py-8"></main>
+
+        <!-- Footer for both pages -->
+        <footer class="w-full text-center py-6 text-gray-400 text-sm">
+            &copy; 2025 PW student to Student ONLY. All rights reserved.
+        </footer>
+    </div>
+
+    <!-- AI Response Modal -->
+    <div id="ai-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50">
+        <div class="bg-[#1d0a2d] p-8 rounded-xl shadow-lg border border-gray-700 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-bold text-[#9b51e0]">AI Assistant Response</h3>
+                <button id="close-modal" class="text-gray-400 hover:text-white">
+                    <!-- Inline SVG Icon for Close Circle -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 512 512" fill="currentColor">
+                        <path d="M256 48C141.31 48 48 141.31 48 256s93.31 208 208 208 208-93.31 208-208S370.69 48 256 48zm85.3 268.7a16 16 0 01-22.6 22.6L256 278.6l-62.7 62.7a16 16 0 01-22.6-22.6l62.7-62.7-62.7-62.7a16 16 0 0122.6-22.6l62.7 62.7 62.7-62.7a16 16 0 0122.6 22.6l-62.7 62.7z"/>
+                    </svg>
+                </button>
+            </div>
+            <div id="modal-content"></div>
+        </div>
+    </div>
+
+    <!-- All of the main JavaScript logic for our single-page application -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const mainContent = document.getElementById('main-content');
+            const aiModal = document.getElementById('ai-modal');
+            const modalContent = document.getElementById('modal-content');
+            
+            // This variable checks if the user is signed up yet.
+            let isRegistered = false;
+
+            // This function shows the registration form
+            const renderRegistrationForm = () => {
+                mainContent.innerHTML = `
+                    <div class="flex flex-col items-center text-center mt-20">
+                        <h2 class="text-5xl font-extrabold text-[#9b51e0]">PW student to Student ONLY</h2>
+                        <p class="mt-4 text-gray-300 max-w-lg">
+                            Welcome to the PW student to Student ONLY platform! This is a space for junior and senior students to connect, ask questions, and share knowledge. 
+                            <br><br>
+                            
+                        </p>
+
+                        <div class="mt-16 w-full max-w-md bg-[#1d0a2d] p-8 rounded-xl shadow-lg border border-gray-700">
+                            <h3 class="text-2xl font-bold mb-2">Introduce yourself  ^_^</h3>
+                            <p class="text-sm text-gray-400 mb-6">Enter your details below to get started.</p>
+                            <form id="registration-form" class="space-y-4">
+                                <div>
+                                    <label for="name" class="block text-left text-sm font-medium text-gray-300 mb-1">
+                                        Name
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="name"
+                                        placeholder="Your Name"
+                                        required
+                                        class="w-full px-4 py-2 bg-[#09030e] border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#9b51e0] transition-all"
+                                    />
+                                </div>
+                                <div>
+                                    <label for="email" class="block text-left text-sm font-medium text-gray-300 mb-1">
+                                        Email
+                                    </label>
+                                    <input
+                                        type="email"
+                                        id="email"
+                                        placeholder="name@example.com"
+                                        required
+                                        class="w-full px-4 py-2 bg-[#09030e] border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#9b51e0] transition-all"
+                                    />
+                                </div>
+                                <button
+                                    type="submit"
+                                    class="w-full bg-[#9b51e0] text-white font-bold py-3 rounded-lg shadow-md hover:bg-[#8545c2] transition-colors duration-300"
+                                >
+                                    Submit
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                `;
+
+                // When the form is submitted, we go to the dashboard
+                document.getElementById('registration-form').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    isRegistered = true;
+                    renderDashboard();
+                });
+            };
+
+            // This function shows the dashboard page
+            const renderDashboard = () => {
+                mainContent.innerHTML = `
+                    <div class="flex flex-col items-center">
+                        <h2 class="text-4xl font-extrabold mb-8">Announcements 📢</h2>
+                        <p class="text-gray-400 mb-12">Stay up-to-date with the latest news and events.</p>
+
+                        <!-- Announcements Section -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16 w-full">
+                            <!-- Card 1 -->
+                            <div class="bg-[#1d0a2d] p-6 rounded-xl shadow-lg border border-gray-700">
+                                <div class="flex items-center text-[#9b51e0] mb-2">
+                                    <!-- Inline SVG Icon for Megaphone -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 512 512" fill="currentColor">
+                                        <path d="M211.39 88.58A134.45 134.45 0 00115.5 64h-30.8a16 16 0 00-16 16v320a16 16 0 0016 16h30.8a134.45 134.45 0 0095.89-24.58L424 288v-64L211.39 88.58z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>
+                                        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M424 288l7.25 40a80 80 0 01-144 0v-40M424 224l7.25-40a80 80 0 00-144 0v40"/>
+                                    </svg>
+                                </div>
+                                <h4 class="text-xl font-bold">PW student to Student ONLY Launch!</h4>
+                                <p class="text-sm text-gray-500 mb-4">August 1, 2024</p>
+                                <p class="text-sm text-gray-300">Welcome to the official launch of PW student to Student ONLY! This platform is designed to bridge the gap between junior and senior students. Ask questions, get answers, and stay connected.</p>
+                            </div>
+                            <!-- Card 2 -->
+                            <div class="bg-[#1d0a2d] p-6 rounded-xl shadow-lg border border-gray-700">
+                                <div class="flex items-center text-[#9b51e0] mb-2">
+                                    <!-- Inline SVG Icon for Bulb -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 512 512" fill="currentColor">
+                                        <path d="M312 328a40 40 0 01-40 40H240a40 40 0 01-40-40V232h112zM256 48C141.13 48 48 141.13 48 256s93.13 208 208 208 208-93.13 208-208S370.87 48 256 48z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>
+                                        <path d="M256 128a112 112 0 00-112 112c0 15.65 8.24 45.47 21.6 60.11C184.62 329 200 368 200 384h112c0-16 15.38-55 42.4-83.89C359.76 273.47 368 243.65 368 224a112 112 0 00-112-112z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>
+                                        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M144 384h224M256 464v-16"/>
+                                    </svg>
+                                </div>
+                                <h4 class="text-xl font-bold">Upcoming Workshop: 'Intro to AI'</h4>
+                                <p class="text-sm text-gray-500 mb-4">July 28, 2024</p>
+                                <p class="text-sm text-gray-300">Join us for a hands-on workshop on the basics of Artificial Intelligence, led by our senior students. No prior experience required. Mark your calendars for next Friday!</p>
+                            </div>
+                            <!-- Card 3 -->
+                            <div class="bg-[#1d0a2d] p-6 rounded-xl shadow-lg border border-gray-700">
+                                <div class="flex items-center text-[#9b51e0] mb-2">
+                                    <!-- Inline SVG Icon for Star -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 512 512" fill="currentColor">
+                                        <path d="M480 208H308L256 48l-52 160H32l140 96-54 160 138-98 138 98-54-160z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>
+                                    </svg>
+                                </div>
+                                <h4 class="text-xl font-bold">Senior Mentorship Program Applications Open</h4>
+                                <p class="text-sm text-gray-500 mb-4">July 25, 2024</p>
+                                <p class="text-sm text-gray-300">Looking for guidance? Applications for our Senior Mentorship Program are now open. Get paired with a senior to help you navigate your academic journey.</p>
+                            </div>
+                        </div>
+
+                        <!-- Curated Questions and Ask Our AI Section -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-10 w-full">
+                            <!-- Curated Questions -->
+                            <div class="bg-[#1d0a2d] p-8 rounded-xl shadow-lg border border-gray-700">
+                                <div class="flex items-center space-x-2 mb-6">
+                                    <!-- Inline SVG Icon for Help Circle -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="text-xl text-[#9b51e0] h-6 w-6" viewBox="0 0 512 512" fill="currentColor">
+                                        <path d="M256 80a176 176 0 10176 176A176 176 0 00256 80z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>
+                                        <path d="M256 160c-26.6 0-48 21.4-48 48s21.4 48 48 48 48-21.4 48-48-21.4-48-48-48z" fill="currentColor" stroke="currentColor"/>
+                                        <path d="M256 320v96" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>
+                                    </svg>
+                                    <h3 class="text-2xl font-bold">Curated Questions</h3>
+                                </div>
+                                <p class="text-sm text-gray-400 mb-6">Common questions answered by the community.</p>
+                                <div class="accordion-item border-b border-gray-700 last:border-b-0">
+                                    <button class="accordion-header w-full flex justify-between items-center py-4 text-left font-medium text-gray-200 hover:text-white transition-colors duration-200">
+                                        <span>How are the faculties here in IOI ?</span>
+                                        <svg class="w-4 h-4 transform transition-transform duration-200 rotate-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    </button>
+                                    <div class="accordion-content pb-4 text-sm text-gray-400 hidden">
+                                        <p>They are the best at what they do. IOI has a faculty that is passionate about teaching and mentoring students.
+                                            </p>
+                                    </div>
+                                </div>
+                                <div class="accordion-item border-b border-gray-700 last:border-b-0">
+                                    <button class="accordion-header w-full flex justify-between items-center py-4 text-left font-medium text-gray-200 hover:text-white transition-colors duration-200">
+                                        <span>Is it better than other traditional colleges?</span>
+                                        <svg class="w-4 h-4 transform transition-transform duration-200 rotate-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    </button>
+                                    <div class="accordion-content pb-4 text-sm text-gray-400 hidden">
+                                        <p>Yes, because till the end of 4 years cource students will have a skill set of 2 years industry-experienced person</p>
+                                    </div>
+                                </div>
+                                <div class="accordion-item border-b border-gray-700 last:border-b-0">
+                                    <button class="accordion-header w-full flex justify-between items-center py-4 text-left font-medium text-gray-200 hover:text-white transition-colors duration-200">
+                                        <span>Are there GOOD PLACEMENTS HERE...!!!!</span>
+                                        <svg class="w-4 h-4 transform transition-transform duration-200 rotate-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    </button>
+                                    <div class="accordion-content pb-4 text-sm text-gray-400 hidden">
+                                        <p>Firstly it deppends on YOU students 😂 but if u master what they tech you can crack some MAANG Companies.</p>
+                                    </div>
+                                </div>
+                                <div class="accordion-item border-b border-gray-700 last:border-b-0">
+                                    <button class="accordion-header w-full flex justify-between items-center py-4 text-left font-medium text-gray-200 hover:text-white transition-colors duration-200">
+                                        <span>Where can I find internship opportunities?</span>
+                                        <svg class="w-4 h-4 transform transition-transform duration-200 rotate-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    </button>
+                                    <div class="accordion-content pb-4 text-sm text-gray-400 hidden">
+                                        <p>At the start of 3rd year as students you are open for Internships</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Ask Our AI -->
+                            <div class="bg-[#1d0a2d] p-8 rounded-xl shadow-lg border border-gray-700">
+                                <div class="flex items-center space-x-2 mb-6">
+                                    <!-- Inline SVG Icon for Chatbubbles -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="text-xl text-[#9b51e0] h-6 w-6" viewBox="0 0 512 512" fill="currentColor">
+                                        <path d="M480 144c0-79.54-85.25-144-192-144S96 64.46 96 144c0 14.86 2.25 29.47 6.45 43.6a16.27 16.27 0 00-6.83 8.35L26.33 331.42A19.78 19.78 0 0032 355c3.67 6 10.37 9.4 17.51 9.4H132c32.74 19.45 68.22 30.5 106 30.64C394.75 395.21 480 330.75 480 248.06z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>
+                                        <path d="M96 224c0-14.46 1.83-28.72 5.56-42.6C121.24 135.25 187.31 96 256 96c106.75 0 192 64.46 192 144s-85.25 144-192 144c-24.51-.06-48.4-5.32-70.36-15.42a19.78 19.78 0 00-24 5.37L32 464c-3.67 6-10.37 9.4-17.51 9.4H48c32.74-19.45 68.22-30.5 106-30.64C304.75 448.21 390 383.75 390 301.06z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>
+                                    </svg>
+                                    <h3 class="text-2xl font-bold">Ask Our AI</h3>
+                                </div>
+                                <p class="text-sm text-gray-400 mb-6">Get an instant answer to your question from our AI assistant.</p>
+                                <div class="space-y-4">
+                                    <h4 class="text-lg font-bold">Your Question</h4>
+                                    <p class="text-sm text-gray-400">Enter your question below. The more specific, the better the answer.</p>
+                                    <textarea id="ai-question" rows="4" placeholder="e.g., How can I improve my public speaking skills?" class="w-full px-4 py-3 bg-[#09030e] border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9b51e0] transition-all"></textarea>
+                                    <button id="ask-ai-button" class="w-full bg-[#9b51e0] text-white font-bold py-3 rounded-lg shadow-md hover:bg-[#8545c2] transition-colors duration-300">
+                                        Submit Question ✨
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Add event listener to the Ask AI button
+                document.getElementById('ask-ai-button').addEventListener('click', handleAskAI);
+
+                // Add event listeners for the accordion items
+                document.querySelectorAll('.accordion-header').forEach(header => {
+                    header.addEventListener('click', () => {
+                        const content = header.nextElementSibling;
+                        const icon = header.querySelector('svg');
+                        content.classList.toggle('hidden');
+                        icon.classList.toggle('rotate-180');
+                    });
+                });
+            };
+
+            // This function handles talking to the Gemini API
+            const handleAskAI = async () => {
+                const questionInput = document.getElementById('ai-question');
+                const question = questionInput.value.trim();
+
+                if (!question) return;
+
+                // Show modal and tell the user we are loading
+                aiModal.classList.remove('hidden');
+                modalContent.innerHTML = `<p class="text-gray-400">Generating an answer...</p>`;
+                
+                try {
+                    // This is the API call to Gemini, pretty cool!
+                    let chatHistory = [];
+                    chatHistory.push({ role: "user", parts: [{ text: question }] });
+                    const payload = { contents: chatHistory };
+                    // NOTE: For local hosting, you must replace the empty string below with your actual Gemini API key.
+                    const apiKey = "AIzaSyAfK-z8r2yi7BBSb5W0q5oYpqX-CxpCYZo";
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const result = await response.json();
+                    
+                    let answer = "Sorry, I couldn't generate a response. Please try again.";
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        answer = result.candidates[0].content.parts[0].text;
+                    }
+
+                    // Put the final answer into the modal for the user to see
+                    modalContent.innerHTML = `<p class="text-gray-300 whitespace-pre-wrap">${answer}</p>`;
+                } catch (error) {
+                    console.error("Error calling Gemini API:", error);
+                    // Uh oh, something went wrong, let's tell the user
+                    modalContent.innerHTML = `<p class="text-red-400">An error occurred. Please try again later.</p>`;
+                }
+            };
+            
+            // This is for closing the pop-up modal
+            document.getElementById('close-modal').addEventListener('click', () => {
+                aiModal.classList.add('hidden');
+            });
+            
+            // The first thing we do when the page loads is check if the user is registered or not
+            if (isRegistered) {
+                renderDashboard();
+            } else {
+                renderRegistrationForm();
+            }
+        });
+
+        // =======================================================
+        // This is the code for the cool animated background!
+        // =======================================================
+        window.onload = function() {
+            // Step 1: Get the canvas element and its drawing context
+            const canvas = document.getElementById('math-background');
+            const ctx = canvas.getContext('2d');
+
+            let allTheSymbols = []; // This will hold all our moving symbols
+            const coolMathStuff = ['∑', '∫', '∞', '∇', '∂', 'Φ', 'Ψ', 'Ω', 'μ', 'σ', 'ε', 'β', 'γ', 'α'];
+
+            // This function makes sure the canvas is the right size for the window
+            const resizeCanvas = () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            };
+
+            // This is a "blueprint" for a single moving symbol
+            class MathSymbol {
+                constructor() {
+                    this.reset();
+                }
+
+                // This function draws the symbol on the canvas
+                draw() {
+                    // Make the font size pulse to create a dynamic look
+                    const pulsatingFontSize = this.baseFontSize + Math.sin(Date.now() * 0.0005 * this.pulseSpeed) * 3;
+                    ctx.font = `${pulsatingFontSize}px 'Inter', sans-serif`;
+                    ctx.fillStyle = `rgba(239, 191, 4, 0.1)`;
+                    ctx.fillText(this.text, this.x, this.y);
+                }
+
+                // This function updates the symbol's position
+                update() {
+                    // Move the symbol based on its velocity
+                    this.x += this.dx;
+                    this.y += this.dy;
+
+                    // If a symbol goes off screen, reset its position to a random new location
+                    // This creates a continuous flow of symbols across the screen
+                    if (this.x < -this.baseFontSize || this.x > window.innerWidth + this.baseFontSize ||
+                        this.y < -this.baseFontSize || this.y > window.innerHeight + this.baseFontSize) {
+                        this.reset();
+                    }
+                }
+
+                // This function puts the symbol back at a random position on the screen
+                reset() {
+                    // Start from a random position
+                    this.x = Math.random() * window.innerWidth;
+                    this.y = Math.random() * window.innerHeight;
+                    
+                    // Give it a random velocity
+                    this.dx = (Math.random() - 0.5) * 1; // Speed can be positive or negative
+                    this.dy = (Math.random() - 0.5) * 1; // Speed can be positive or negative
+
+                    // Reset other properties for a fresh start
+                    this.baseFontSize = Math.random() * 20 + 10;
+                    this.opacity = Math.random() * 0.5 + 0.1;
+                    this.text = coolMathStuff[Math.floor(Math.random() * coolMathStuff.length)];
+                    this.pulseSpeed = Math.random() * 0.01 + 0.005;
+                }
+            }
+
+            // Step 2: Create a bunch of symbols to start with
+            const howManySymbols = 60;
+            for (let i = 0; i < howManySymbols; i++) {
+                allTheSymbols.push(new MathSymbol());
+            }
+
+            // Step 3: This is our main animation loop that runs forever
+            const animate = () => {
+                // Instead of clearing the canvas, we draw a semi-transparent rectangle
+                // to create a cool trailing effect behind the symbols.
+                ctx.fillStyle = 'rgba(17, 5, 27, 0.6)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Loop through all our symbols and update/draw them
+                for (let i = 0; i < allTheSymbols.length; i++) {
+                    allTheSymbols[i].update();
+                    allTheSymbols[i].draw();
+                }
+                
+                // Call this function again for the next frame
+                requestAnimationFrame(animate);
+            };
+
+            // Step 4: Run everything!
+            resizeCanvas(); // Make sure the canvas is the right size at the beginning
+            window.addEventListener('resize', resizeCanvas); // Resize if the window changes
+            animate(); // Start the animation!
+        };
+    </script>
+
+</body>
+</html>
