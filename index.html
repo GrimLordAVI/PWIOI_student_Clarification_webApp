@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PW student to Student ONLY</title>
+    <title>PW Student to Student Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,7 +11,7 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #11051b;
+            background-color: #490f79;
             position: relative;
         }
         #content-wrapper {
@@ -19,372 +19,1671 @@
             z-index: 10;
             background-color: transparent; 
         }
+                 .admin-card {
+             transition: all 0.3s ease;
+         }
+         .admin-card:hover {
+             transform: translateY(-4px);
+             box-shadow: 0 8px 25px rgba(155, 81, 224, 0.3);
+             border-color: #9b51e0;
+         }
+         .student-card {
+             transition: all 0.3s ease;
+         }
+         .student-card:hover {
+             transform: translateY(-4px);
+             box-shadow: 0 8px 25px rgba(34, 197, 94, 0.3);
+             border-color: #22c55e;
+         }
+        .question-card {
+            transition: all 0.3s ease;
+        }
+        .question-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(155, 81, 224, 0.2);
+        }
+        .vote-btn {
+            transition: all 0.2s ease;
+        }
+        .vote-btn:hover {
+            transform: scale(1.1);
+        }
+        .vote-btn:active {
+            transform: scale(0.95);
+        }
     </style>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 </head>
 <body class="min-h-screen text-white antialiased flex flex-col">
+    <!-- Animated background canvas -->
     <canvas id="math-background" class="fixed inset-0 z-0"></canvas>
 
     <div id="content-wrapper" class="flex-grow flex flex-col min-h-screen">
-        <!-- Header for both pages -->
-        <header class="w-full max-w-7xl mx-auto px-4 py-6" style="width: 100vw; display: flex; justify-content: center; align-items: center; background-color: rgba(34, 14, 51, 0.2); backdrop-filter: blur(10px); border-radius: 5%; ">
-            <div class="flex items-center space-x-2" >
-                <h1 class="text-xl font-bold"><a href="index.html">PW student to Student ONLY</a></h1>
+        <!-- Header -->
+        <header class="w-full max-w-7xl mx-auto px-6 py-6 fixed top-0 left-1/2 -translate-x-1/2 z-20" style="width: 100vw; display: flex; justify-content: center; align-items: center; background-color: rgba(34, 14, 51, 0.2); backdrop-filter: blur(10px); border-radius: 5%;">
+            <div class="flex items-center justify-between w-full">
+                <h1 class="text-xl font-bold flex-none pl-4">
+                    <a href="#" class="hover:text-[#9b51e0]" onclick="showLoginPage()">PW Student to Student</a>
+                </h1>
+                <div id="user-info" class="hidden">
+                    <span id="user-name" class="mr-4 text-[#9b51e0]"></span>
+                    <span id="user-role" class="mr-4 text-gray-300"></span>
+                    <button id="logout-btn" class="bg-[#9b51e0] text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-[#8545c2] transition-colors duration-300">
+                        Logout
+                    </button>
+                </div>
             </div>
-            
         </header>
 
-        
-        <main id="main-content" class="flex-grow w-full max-w-7xl mx-auto px-4 py-8"></main>
-
-        <!-- Footer for both pages -->
-        <footer class="w-full text-center py-6 text-gray-400 text-sm">
-            &copy; 2025 PW student to Student ONLY. All rights reserved.
-        </footer>
+        <main id="main-content" class="flex-grow w-full max-w-7xl mx-auto px-4 pt-28 pb-20"></main>
     </div>
 
-    <!-- AI Response Modal -->
-    <div id="ai-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50">
-        <div class="bg-[#1d0a2d] p-8 rounded-xl shadow-lg border border-gray-700 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-2xl font-bold text-[#9b51e0]">AI Assistant Response</h3>
-                <button id="close-modal" class="text-gray-400 hover:text-white">
-                    <!-- Inline SVG Icon for Close Circle -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 512 512" fill="currentColor">
-                        <path d="M256 48C141.31 48 48 141.31 48 256s93.31 208 208 208 208-93.31 208-208S370.69 48 256 48zm85.3 268.7a16 16 0 01-22.6 22.6L256 278.6l-62.7 62.7a16 16 0 01-22.6-22.6l62.7-62.7-62.7-62.7a16 16 0 0122.6-22.6l62.7 62.7 62.7-62.7a16 16 0 0122.6 22.6l-62.7 62.7z"/>
-                    </svg>
-                </button>
+    <!-- Footer -->
+    <footer id="footer" class="text-center py-6 text-gray-400 text-sm bg-[#1d0a2d] border-t border-gray-700">
+        &copy; 2025 PW Student to Student Platform. All rights reserved.
+    </footer>
+    </div>
+
+    <!-- Admin Cart -->
+    <div id="admin-cart" class="hidden w-full h-32 bg-[#1d0a2d] border-t border-gray-700 z-30">
+        <div class="flex justify-center items-center h-full px-8">
+            <div class="flex space-x-8 items-center">
+                <div class="admin-card flex items-center space-x-4 bg-gradient-to-r from-[#09030e] to-[#1a0a2d] p-4 rounded-2xl border border-gray-600 shadow-lg">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50&h=50&fit=crop&crop=face" alt="Admin" class="w-12 h-12 rounded-full ring-2 ring-[#9b51e0]">
+                    <div>
+                        <h4 class="font-bold text-[#9b51e0]">John Doe</h4>
+                        <p class="text-sm text-gray-400">Computer Science • 4th Year</p>
+                        <a href="#" class="text-xs text-blue-400 hover:underline">LinkedIn</a>
+                    </div>
+                </div>
+                <div class="admin-card flex items-center space-x-4 bg-gradient-to-r from-[#09030e] to-[#1a0a2d] p-4 rounded-2xl border border-gray-600 shadow-lg">
+                    <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=50&h=50&fit=crop&crop=face" alt="Admin" class="w-12 h-12 rounded-full ring-2 ring-[#9b51e0]">
+                    <div>
+                        <h4 class="font-bold text-[#9b51e0]">Sarah Wilson</h4>
+                        <p class="text-sm text-gray-400">Data Science • 3rd Year</p>
+                        <a href="#" class="text-xs text-blue-400 hover:underline">LinkedIn</a>
+                    </div>
+                </div>
+                <div class="admin-card flex items-center space-x-4 bg-gradient-to-r from-[#09030e] to-[#1a0a2d] p-4 rounded-2xl border border-gray-600 shadow-lg">
+                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=50&h=50&fit=crop&crop=face" alt="Admin" class="w-12 h-12 rounded-full ring-2 ring-[#9b51e0]">
+                    <div>
+                        <h4 class="font-bold text-[#9b51e0]">Mike Chen</h4>
+                        <p class="text-sm text-gray-400">AI/ML • 4th Year</p>
+                        <a href="#" class="text-xs text-blue-400 hover:underline">LinkedIn</a>
+                    </div>
+                </div>
+                <div class="admin-card flex items-center space-x-4 bg-gradient-to-r from-[#09030e] to-[#1a0a2d] p-4 rounded-2xl border border-gray-600 shadow-lg">
+                    <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=50&h=50&fit=crop&crop=face" alt="Admin" class="w-12 h-12 rounded-full ring-2 ring-[#9b51e0]">
+                    <div>
+                        <h4 class="font-bold text-[#9b51e0]">Emma Davis</h4>
+                        <p class="text-sm text-gray-400">Software Engineering • 3rd Year</p>
+                        <a href="#" class="text-xs text-blue-400 hover:underline">LinkedIn</a>
+                    </div>
+                </div>
+                <div class="admin-card flex items-center space-x-4 bg-gradient-to-r from-[#09030e] to-[#1a0a2d] p-4 rounded-2xl border border-gray-600 shadow-lg">
+                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=50&h=50&fit=crop&crop=face" alt="Admin" class="w-12 h-12 rounded-full ring-2 ring-[#9b51e0]">
+                    <div>
+                        <h4 class="font-bold text-[#9b51e0]">Alex Kumar</h4>
+                        <p class="text-sm text-gray-400">Cybersecurity • 4th Year</p>
+                        <a href="#" class="text-xs text-blue-400 hover:underline">LinkedIn</a>
+                    </div>
+                </div>
             </div>
-            <div id="modal-content"></div>
         </div>
     </div>
 
-    <!-- All of the main JavaScript logic for our single-page application -->
+    <!-- Student Cart -->
+    <div id="student-cart" class="hidden w-full h-32 bg-[#1d0a2d] border-t border-gray-700 z-30">
+        <div class="flex justify-center items-center h-full px-8">
+            <div class="flex space-x-8 items-center">
+                <div class="student-card flex items-center space-x-4 bg-gradient-to-r from-[#09030e] to-[#1a0a2d] p-4 rounded-2xl border border-gray-600 shadow-lg">
+                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=50&h=50&fit=crop&crop=face" alt="Student" class="w-12 h-12 rounded-full ring-2 ring-green-400">
+                    <div>
+                        <h4 class="font-bold text-green-400">Lisa Park</h4>
+                        <p class="text-sm text-gray-400">Computer Science • 2nd Year</p>
+                        <a href="#" class="text-xs text-blue-400 hover:underline">LinkedIn</a>
+                    </div>
+                </div>
+                <div class="student-card flex items-center space-x-4 bg-gradient-to-r from-[#09030e] to-[#1a0a2d] p-4 rounded-2xl border border-gray-600 shadow-lg">
+                    <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=50&h=50&fit=crop&crop=face" alt="Student" class="w-12 h-12 rounded-full ring-2 ring-green-400">
+                    <div>
+                        <h4 class="font-bold text-green-400">David Kim</h4>
+                        <p class="text-sm text-gray-400">Data Science • 1st Year</p>
+                        <a href="#" class="text-xs text-blue-400 hover:underline">LinkedIn</a>
+                    </div>
+                </div>
+                <div class="student-card flex items-center space-x-4 bg-gradient-to-r from-[#09030e] to-[#1a0a2d] p-4 rounded-2xl border border-gray-600 shadow-lg">
+                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=50&h=50&fit=crop&crop=face" alt="Student" class="w-12 h-12 rounded-full ring-2 ring-green-400">
+                    <div>
+                        <h4 class="font-bold text-green-400">Maria Garcia</h4>
+                        <p class="text-sm text-gray-400">Software Engineering • 2nd Year</p>
+                        <a href="#" class="text-xs text-blue-400 hover:underline">LinkedIn</a>
+                    </div>
+                </div>
+                <div class="student-card flex items-center space-x-4 bg-gradient-to-r from-[#09030e] to-[#1a0a2d] p-4 rounded-2xl border border-gray-600 shadow-lg">
+                    <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=50&h=50&fit=crop&crop=face" alt="Student" class="w-12 h-12 rounded-full ring-2 ring-green-400">
+                    <div>
+                        <h4 class="font-bold text-green-400">James Wilson</h4>
+                        <p class="text-sm text-gray-400">AI/ML • 1st Year</p>
+                        <a href="#" class="text-xs text-blue-400 hover:underline">LinkedIn</a>
+                    </div>
+                </div>
+                <div class="student-card flex items-center space-x-4 bg-gradient-to-r from-[#09030e] to-[#1a0a2d] p-4 rounded-2xl border border-gray-600 shadow-lg">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50&h=50&fit=crop&crop=face" alt="Student" class="w-12 h-12 rounded-full ring-2 ring-green-400">
+                    <div>
+                        <h4 class="font-bold text-green-400">Sophie Chen</h4>
+                        <p class="text-sm text-gray-400">Cybersecurity • 2nd Year</p>
+                        <a href="#" class="text-xs text-blue-400 hover:underline">LinkedIn</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const mainContent = document.getElementById('main-content');
-            const aiModal = document.getElementById('ai-modal');
-            const modalContent = document.getElementById('modal-content');
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCh1IyjDDALr82hwS8VvnwezrPMHXE1lms",
+            authDomain: "authorization-for-mem.firebaseapp.com",
+            projectId: "authorization-for-mem",
+            storageBucket: "authorization-for-mem.firebasestorage.app",
+            messagingSenderId: "737219355052",
+            appId: "1:737219355052:web:ac5026aa2769ee67419a09",
+            measurementId: "G-ZL1RJ64508"
+        };
+
+        // Initialize Firebase
+        let auth, db;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            auth = firebase.auth();
+            db = firebase.firestore();
             
-            // This variable checks if the user is signed up yet.
-            let isRegistered = false;
+            // Enable offline persistence for better reliability
+            db.enablePersistence()
+                .catch((err) => {
+                    if (err.code == 'failed-precondition') {
+                        console.log('Multiple tabs open, persistence can only be enabled in one tab at a time.');
+                    } else if (err.code == 'unimplemented') {
+                        console.log('The current browser does not support persistence.');
+                    }
+                });
+                
+            console.log('✅ Firebase initialized successfully');
+        } catch (error) {
+            console.error('Firebase initialization error:', error);
+            alert('Application initialization failed. Please try again later.');
+        }
 
-            // This function shows the registration form
-            const renderRegistrationForm = () => {
-                mainContent.innerHTML = `
-                    <div class="flex flex-col items-center text-center mt-20">
-                        <h2 class="text-5xl font-extrabold text-[#9b51e0]">PW student to Student ONLY</h2>
-                        <p class="mt-4 text-gray-300 max-w-lg">
-                            Welcome to the PW student to Student ONLY platform! This is a space for junior and senior students to connect, ask questions, and share knowledge. 
-                            <br><br>
-                            
-                        </p>
+        let currentUser = null;
+        let userRole = null;
+        let lastQuestionSubmitTime = 0;
 
-                        <div class="mt-16 w-full max-w-md bg-[#1d0a2d] p-8 rounded-xl shadow-lg border border-gray-700">
-                            <h3 class="text-2xl font-bold mb-2">Introduce yourself  ^_^</h3>
-                            <p class="text-sm text-gray-400 mb-6">Enter your details below to get started.</p>
-                            <form id="registration-form" class="space-y-4">
+        // DOM Elements
+        const mainContent = document.getElementById('main-content');
+        const userInfo = document.getElementById('user-info');
+        const userName = document.getElementById('user-name');
+        const userRoleSpan = document.getElementById('user-role');
+        const logoutBtn = document.getElementById('logout-btn');
+        const adminCart = document.getElementById('admin-cart');
+        const studentCart = document.getElementById('student-cart');
+
+        // Authentication state observer
+        if (auth) {
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    currentUser = user;
+                    checkUserRole(user.uid);
+                } else {
+                    currentUser = null;
+                    userRole = null;
+                    showLoginPage();
+                }
+            });
+        } else {
+            // Fallback if Firebase auth is not available
+            showLoginPage();
+        }
+
+        // Check if user is admin or student
+        async function checkUserRole(uid) {
+            try {
+                const userDoc = await db.collection('users').doc(uid).get();
+                if (userDoc.exists) {
+                    userRole = userDoc.data().role;
+                    showDashboard();
+                } else {
+                    // New user - default to student
+                    userRole = 'student';
+                    await db.collection('users').doc(uid).set({
+                        email: currentUser.email,
+                        name: currentUser.displayName || currentUser.email,
+                        role: 'student',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    showDashboard();
+                }
+            } catch (error) {
+                console.error('Error checking user role:', error);
+                userRole = 'student';
+                showDashboard();
+            }
+        }
+
+        // Show login page
+        function showLoginPage() {
+            userInfo.classList.add('hidden');
+            adminCart.classList.add('hidden');
+            studentCart.classList.add('hidden');
+            mainContent.innerHTML = `
+                <div class="flex flex-col items-center justify-center min-h-screen">
+                    <div class="text-center mb-12">
+                        <h1 class="text-6xl font-extrabold text-[#9b51e0] mb-4">PW Student to Student</h1>
+                        <p class="text-xl text-gray-300">Connect, Learn, and Grow Together</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl">
+                        <!-- Student Login -->
+                        <div class="bg-[#1d0a2d] p-8 rounded-xl shadow-lg border border-gray-700">
+                            <div class="text-center mb-6">
+                                <div class="w-16 h-16 bg-[#9b51e0] rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                    </svg>
+                                </div>
+                                <h2 class="text-2xl font-bold text-[#9b51e0]">Student Login</h2>
+                                <p class="text-gray-400 mt-2">Ask questions and get answers from seniors</p>
+                            </div>
+                            <button onclick="signInWithGoogle('student')" class="w-full bg-[#9b51e0] text-white font-bold py-3 rounded-lg shadow-md hover:bg-[#8545c2] transition-colors duration-300">
+                                Sign in with Google
+                            </button>
+                        </div>
+
+                        <!-- Admin Login -->
+                        <div class="bg-[#1d0a2d] p-8 rounded-xl shadow-lg border border-gray-700">
+                            <div class="text-center mb-6">
+                                <div class="w-16 h-16 bg-[#9b51e0] rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                                    </svg>
+                                </div>
+                                <h2 class="text-2xl font-bold text-[#9b51e0]">Admin Login</h2>
+                                <p class="text-gray-400 mt-2">Answer questions and mentor students</p>
+                            </div>
+                            <button onclick="signInWithGoogle('admin')" class="w-full bg-[#9b51e0] text-white font-bold py-3 rounded-lg shadow-md hover:bg-[#8545c2] transition-colors duration-300">
+                                Sign in with Google
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Sign in with Google
+        async function signInWithGoogle(role) {
+            try {
+                const provider = new firebase.auth.GoogleAuthProvider();
+                provider.addScope('email');
+                provider.addScope('profile');
+                
+                const result = await auth.signInWithPopup(provider);
+                
+                // Save user role to Firestore
+                await db.collection('users').doc(result.user.uid).set({
+                    email: result.user.email,
+                    name: result.user.displayName || result.user.email,
+                    role: role,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                userRole = role;
+                showDashboard();
+            } catch (error) {
+                console.error('Sign in error:', error);
+                
+                // More specific error messages
+                if (error.code === 'auth/popup-blocked') {
+                    alert('Sign in popup was blocked. Please allow popups for this site and try again.');
+                } else if (error.code === 'auth/popup-closed-by-user') {
+                    alert('Sign in was cancelled. Please try again.');
+                } else if (error.code === 'auth/unauthorized-domain') {
+                    alert('This domain is not authorized for sign in. Please contact support.');
+                } else {
+                    alert('Sign in failed. Please try again.');
+                }
+            }
+        }
+
+        // Show dashboard
+        function showDashboard() {
+            userInfo.classList.remove('hidden');
+            userName.textContent = currentUser.displayName || currentUser.email;
+            userRoleSpan.textContent = userRole === 'admin' ? 'Admin' : 'Student';
+            
+            if (userRole === 'admin') {
+                adminCart.classList.remove('hidden');
+            } else {
+                studentCart.classList.remove('hidden');
+            }
+
+            mainContent.innerHTML = `
+                <div class="flex flex-col items-center w-full space-y-12">
+                    <!-- Announcements Section -->
+                    <div class="w-full max-w-4xl bg-[#1d0a2d] p-8 rounded-xl shadow-lg border border-gray-700">
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="flex items-center space-x-2">
+                                <h3 class="text-2xl font-bold text-[#9b51e0]">📢 Announcements</h3>
+                            </div>
+                            ${userRole === 'admin' ? `
+                                <button onclick="showAnnouncementForm()" class="bg-[#9b51e0] text-white px-4 py-2 rounded-lg hover:bg-[#8545c2] transition-colors duration-300 font-medium">
+                                    + New Announcement
+                                </button>
+                            ` : ''}
+                        </div>
+                        <p class="text-sm text-gray-400 mb-6">Stay updated with the latest news and important information.</p>
+                        <div id="announcements-container" class="space-y-4">
+                            <!-- Announcements will be loaded here -->
+                        </div>
+                    </div>
+
+                    <!-- Ask a Question Section -->
+                    <div class="w-full max-w-2xl bg-[#1d0a2d] p-8 rounded-xl shadow-lg border border-gray-700">
+                        <div class="flex items-center space-x-2 mb-6">
+                            <h3 class="text-2xl font-bold text-[#9b51e0]">Ask a Question 🧑‍🎓</h3>
+                        </div>
+                        <p class="text-sm text-gray-400 mb-6">Got a question? Ask away and get answers from the community!</p>
+                        <div id="question-form-container">
+                            <form id="ask-question-form" class="space-y-4">
                                 <div>
-                                    <label for="name" class="block text-left text-sm font-medium text-gray-300 mb-1">
-                                        Name
+                                    <label for="question-title" class="block text-left text-sm font-medium text-gray-300 mb-1">
+                                        Question Title
                                     </label>
                                     <input
                                         type="text"
-                                        id="name"
-                                        placeholder="Your Name"
+                                        id="question-title"
+                                        placeholder="E.g., How to prepare for campus placements?"
                                         required
                                         class="w-full px-4 py-2 bg-[#09030e] border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#9b51e0] transition-all"
                                     />
                                 </div>
                                 <div>
-                                    <label for="email" class="block text-left text-sm font-medium text-gray-300 mb-1">
-                                        Email
+                                    <label for="question-details" class="block text-left text-sm font-medium text-gray-300 mb-1">
+                                        Details
                                     </label>
-                                    <input
-                                        type="email"
-                                        id="email"
-                                        placeholder="name@example.com"
+                                    <textarea
+                                        id="question-details"
+                                        rows="4"
+                                        placeholder="Provide more details about your question..."
                                         required
-                                        class="w-full px-4 py-2 bg-[#09030e] border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#9b51e0] transition-all"
-                                    />
+                                        class="w-full px-4 py-3 bg-[#09030e] border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9b51e0] transition-all"
+                                    ></textarea>
                                 </div>
+                                ${userRole === 'student' ? `
+                                    <div class="flex items-center space-x-2">
+                                        <input
+                                            type="checkbox"
+                                            id="anonymous-checkbox"
+                                            class="w-4 h-4 text-[#9b51e0] bg-[#09030e] border-gray-600 rounded focus:ring-[#9b51e0] focus:ring-2"
+                                        />
+                                        <label for="anonymous-checkbox" class="text-sm text-gray-300">
+                                            Post anonymously (your name will be hidden from other students, but visible to admins)
+                                        </label>
+                                    </div>
+                                ` : ''}
                                 <button
                                     type="submit"
                                     class="w-full bg-[#9b51e0] text-white font-bold py-3 rounded-lg shadow-md hover:bg-[#8545c2] transition-colors duration-300"
                                 >
-                                    Submit
+                                    Submit Question
                                 </button>
                             </form>
                         </div>
                     </div>
-                `;
 
-                // When the form is submitted, we go to the dashboard
-                document.getElementById('registration-form').addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    isRegistered = true;
-                    renderDashboard();
-                });
-            };
-
-            // This function shows the dashboard page
-            const renderDashboard = () => {
-                mainContent.innerHTML = `
-                    <div class="flex flex-col items-center">
-                        <h2 class="text-4xl font-extrabold mb-8">Announcements 📢</h2>
-                        <p class="text-gray-400 mb-12">Stay up-to-date with the latest news and events.</p>
-
-                        <!-- Announcements Section -->
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16 w-full">
-                            <!-- Card 1 -->
-                            <div class="bg-[#1d0a2d] p-6 rounded-xl shadow-lg border border-gray-700">
-                                <div class="flex items-center text-[#9b51e0] mb-2">
-                                    <!-- Inline SVG Icon for Megaphone -->
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 512 512" fill="currentColor">
-                                        <path d="M211.39 88.58A134.45 134.45 0 00115.5 64h-30.8a16 16 0 00-16 16v320a16 16 0 0016 16h30.8a134.45 134.45 0 0095.89-24.58L424 288v-64L211.39 88.58z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>
-                                        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M424 288l7.25 40a80 80 0 01-144 0v-40M424 224l7.25-40a80 80 0 00-144 0v40"/>
-                                    </svg>
-                                </div>
-                                <h4 class="text-xl font-bold">PW student to Student ONLY Launch!</h4>
-                                <p class="text-sm text-gray-500 mb-4">August 1, 2024</p>
-                                <p class="text-sm text-gray-300">Welcome to the official launch of PW student to Student ONLY! This platform is designed to bridge the gap between junior and senior students. Ask questions, get answers, and stay connected.</p>
-                            </div>
-                            <!-- Card 2 -->
-                            <div class="bg-[#1d0a2d] p-6 rounded-xl shadow-lg border border-gray-700">
-                                <div class="flex items-center text-[#9b51e0] mb-2">
-                                    <!-- Inline SVG Icon for Bulb -->
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 512 512" fill="currentColor">
-                                        <path d="M312 328a40 40 0 01-40 40H240a40 40 0 01-40-40V232h112zM256 48C141.13 48 48 141.13 48 256s93.13 208 208 208 208-93.13 208-208S370.87 48 256 48z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>
-                                        <path d="M256 128a112 112 0 00-112 112c0 15.65 8.24 45.47 21.6 60.11C184.62 329 200 368 200 384h112c0-16 15.38-55 42.4-83.89C359.76 273.47 368 243.65 368 224a112 112 0 00-112-112z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>
-                                        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M144 384h224M256 464v-16"/>
-                                    </svg>
-                                </div>
-                                <h4 class="text-xl font-bold">Upcoming Workshop: 'Intro to AI'</h4>
-                                <p class="text-sm text-gray-500 mb-4">July 28, 2024</p>
-                                <p class="text-sm text-gray-300">Join us for a hands-on workshop on the basics of Artificial Intelligence, led by our senior students. No prior experience required. Mark your calendars for next Friday!</p>
-                            </div>
-                            <!-- Card 3 -->
-                            <div class="bg-[#1d0a2d] p-6 rounded-xl shadow-lg border border-gray-700">
-                                <div class="flex items-center text-[#9b51e0] mb-2">
-                                    <!-- Inline SVG Icon for Star -->
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 512 512" fill="currentColor">
-                                        <path d="M480 208H308L256 48l-52 160H32l140 96-54 160 138-98 138 98-54-160z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>
-                                    </svg>
-                                </div>
-                                <h4 class="text-xl font-bold">Senior Mentorship Program Applications Open</h4>
-                                <p class="text-sm text-gray-500 mb-4">July 25, 2024</p>
-                                <p class="text-sm text-gray-300">Looking for guidance? Applications for our Senior Mentorship Program are now open. Get paired with a senior to help you navigate your academic journey.</p>
-                            </div>
+                    <!-- Questions Pool -->
+                    <div class="w-full max-w-4xl bg-[#1d0a2d] p-8 rounded-xl shadow-lg border border-gray-700">
+                        <div class="flex items-center space-x-2 mb-6">
+                            <h3 class="text-2xl font-bold">Questions Pool 📝</h3>
                         </div>
-
-                        <!-- Curated Questions and Ask Our AI Section -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-10 w-full">
-                            <!-- Curated Questions -->
-                            <div class="bg-[#1d0a2d] p-8 rounded-xl shadow-lg border border-gray-700">
-                                <div class="flex items-center space-x-2 mb-6">
-                                    <!-- Inline SVG Icon for Help Circle -->
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="text-xl text-[#9b51e0] h-6 w-6" viewBox="0 0 512 512" fill="currentColor">
-                                        <path d="M256 80a176 176 0 10176 176A176 176 0 00256 80z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>
-                                        <path d="M256 160c-26.6 0-48 21.4-48 48s21.4 48 48 48 48-21.4 48-48-21.4-48-48-48z" fill="currentColor" stroke="currentColor"/>
-                                        <path d="M256 320v96" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>
-                                    </svg>
-                                    <h3 class="text-2xl font-bold">Curated Questions</h3>
-                                </div>
-                                <p class="text-sm text-gray-400 mb-6">Common questions answered by the community.</p>
-                                <div class="accordion-item border-b border-gray-700 last:border-b-0">
-                                    <button class="accordion-header w-full flex justify-between items-center py-4 text-left font-medium text-gray-200 hover:text-white transition-colors duration-200">
-                                        <span>How are the faculties here in IOI ?</span>
-                                        <svg class="w-4 h-4 transform transition-transform duration-200 rotate-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                                    </button>
-                                    <div class="accordion-content pb-4 text-sm text-gray-400 hidden">
-                                        <p>They are the best at what they do. IOI has a faculty that is passionate about teaching and mentoring students.
-                                            </p>
-                                    </div>
-                                </div>
-                                <div class="accordion-item border-b border-gray-700 last:border-b-0">
-                                    <button class="accordion-header w-full flex justify-between items-center py-4 text-left font-medium text-gray-200 hover:text-white transition-colors duration-200">
-                                        <span>Is it better than other traditional colleges?</span>
-                                        <svg class="w-4 h-4 transform transition-transform duration-200 rotate-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                                    </button>
-                                    <div class="accordion-content pb-4 text-sm text-gray-400 hidden">
-                                        <p>Yes, because till the end of 4 years cource students will have a skill set of 2 years industry-experienced person</p>
-                                    </div>
-                                </div>
-                                <div class="accordion-item border-b border-gray-700 last:border-b-0">
-                                    <button class="accordion-header w-full flex justify-between items-center py-4 text-left font-medium text-gray-200 hover:text-white transition-colors duration-200">
-                                        <span>Are there GOOD PLACEMENTS HERE...!!!!</span>
-                                        <svg class="w-4 h-4 transform transition-transform duration-200 rotate-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                                    </button>
-                                    <div class="accordion-content pb-4 text-sm text-gray-400 hidden">
-                                        <p>Firstly it deppends on YOU students 😂 but if u master what they tech you can crack some MAANG Companies.</p>
-                                    </div>
-                                </div>
-                                <div class="accordion-item border-b border-gray-700 last:border-b-0">
-                                    <button class="accordion-header w-full flex justify-between items-center py-4 text-left font-medium text-gray-200 hover:text-white transition-colors duration-200">
-                                        <span>Where can I find internship opportunities?</span>
-                                        <svg class="w-4 h-4 transform transition-transform duration-200 rotate-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                                    </button>
-                                    <div class="accordion-content pb-4 text-sm text-gray-400 hidden">
-                                        <p>At the start of 3rd year as students you are open for Internships</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Ask Our AI -->
-                            <div class="bg-[#1d0a2d] p-8 rounded-xl shadow-lg border border-gray-700">
-                                <div class="flex items-center space-x-2 mb-6">
-                                    <!-- Inline SVG Icon for Chatbubbles -->
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="text-xl text-[#9b51e0] h-6 w-6" viewBox="0 0 512 512" fill="currentColor">
-                                        <path d="M480 144c0-79.54-85.25-144-192-144S96 64.46 96 144c0 14.86 2.25 29.47 6.45 43.6a16.27 16.27 0 00-6.83 8.35L26.33 331.42A19.78 19.78 0 0032 355c3.67 6 10.37 9.4 17.51 9.4H132c32.74 19.45 68.22 30.5 106 30.64C394.75 395.21 480 330.75 480 248.06z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>
-                                        <path d="M96 224c0-14.46 1.83-28.72 5.56-42.6C121.24 135.25 187.31 96 256 96c106.75 0 192 64.46 192 144s-85.25 144-192 144c-24.51-.06-48.4-5.32-70.36-15.42a19.78 19.78 0 00-24 5.37L32 464c-3.67 6-10.37 9.4-17.51 9.4H48c32.74-19.45 68.22-30.5 106-30.64C304.75 448.21 390 383.75 390 301.06z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>
-                                    </svg>
-                                    <h3 class="text-2xl font-bold">Ask Our AI</h3>
-                                </div>
-                                <p class="text-sm text-gray-400 mb-6">Get an instant answer to your question from our AI assistant.</p>
-                                <div class="space-y-4">
-                                    <h4 class="text-lg font-bold">Your Question</h4>
-                                    <p class="text-sm text-gray-400">Enter your question below. The more specific, the better the answer.</p>
-                                    <textarea id="ai-question" rows="4" placeholder="e.g., How can I improve my public speaking skills?" class="w-full px-4 py-3 bg-[#09030e] border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9b51e0] transition-all"></textarea>
-                                    <button id="ask-ai-button" class="w-full bg-[#9b51e0] text-white font-bold py-3 rounded-lg shadow-md hover:bg-[#8545c2] transition-colors duration-300">
-                                        Submit Question ✨
-                                    </button>
-                                </div>
-                            </div>
+                        <p class="text-sm text-gray-400 mb-6">Browse and vote on questions from the community.</p>
+                        <div id="questions-container" class="space-y-6">
+                            <!-- Questions will be loaded here -->
                         </div>
                     </div>
-                `;
+                </div>
+            `;
 
-                // Add event listener to the Ask AI button
-                document.getElementById('ask-ai-button').addEventListener('click', handleAskAI);
+            // Add event listeners
+            document.getElementById('ask-question-form').addEventListener('submit', handleQuestionSubmit);
+            loadQuestions();
+            loadAnnouncements();
+            checkPendingQuestions();
+        }
 
-                // Add event listeners for the accordion items
-                document.querySelectorAll('.accordion-header').forEach(header => {
-                    header.addEventListener('click', () => {
-                        const content = header.nextElementSibling;
-                        const icon = header.querySelector('svg');
-                        content.classList.toggle('hidden');
-                        icon.classList.toggle('rotate-180');
-                    });
-                });
-            };
+        // Handle question submission
+        async function handleQuestionSubmit(e) {
+            e.preventDefault();
+            const title = document.getElementById('question-title').value.trim();
+            const details = document.getElementById('question-details').value.trim();
+            const isAnonymous = document.getElementById('anonymous-checkbox').checked;
+            
+            if (!title || !details) {
+                alert('Please fill in both title and details.');
+                return;
+            }
+            
+            // Basic input validation
+            if (title.length > 200) {
+                alert('Question title is too long. Please keep it under 200 characters.');
+                return;
+            }
+            
+            if (details.length > 2000) {
+                alert('Question details are too long. Please keep it under 2000 characters.');
+                return;
+            }
+            
+            // Rate limiting - prevent spam
+            const now = Date.now();
+            if (now - lastQuestionSubmitTime < 30000) { // 30 seconds
+                alert('Please wait 30 seconds between question submissions.');
+                return;
+            }
 
-            // This function handles talking to the Gemini API
-            const handleAskAI = async () => {
-                const questionInput = document.getElementById('ai-question');
-                const question = questionInput.value.trim();
-
-                if (!question) return;
-
-                // Show modal and tell the user we are loading
-                aiModal.classList.remove('hidden');
-                modalContent.innerHTML = `<p class="text-gray-400">Generating an answer...</p>`;
+            // Check if user already has a pending question
+            try {
+                const existingQuestions = await db.collection('questions')
+                    .where('authorId', '==', currentUser.uid)
+                    .where('status', '==', 'pending')
+                    .get();
                 
-                try {
-                    // This is the API call to Gemini, pretty cool!
-                    let chatHistory = [];
-                    chatHistory.push({ role: "user", parts: [{ text: question }] });
-                    const payload = { contents: chatHistory };
-                    // NOTE: For local hosting, you must replace the empty string below with your actual Gemini API key.
-                    const apiKey = "AIzaSyAfK-z8r2yi7BBSb5W0q5oYpqX-CxpCYZo";
-                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+                if (!existingQuestions.empty) {
+                    alert('You already have a pending question. Please wait for an answer or edit your existing question.');
+                    return;
+                }
 
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
+                await db.collection('questions').add({
+                    title,
+                    details,
+                    authorId: currentUser.uid,
+                    authorName: currentUser.displayName || currentUser.email,
+                    displayName: isAnonymous ? 'Anonymous Student' : (currentUser.displayName || currentUser.email),
+                    isAnonymous: isAnonymous,
+                    votes: 0,
+                    answers: [],
+                    status: 'pending',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                document.getElementById('ask-question-form').reset();
+                document.getElementById('anonymous-checkbox').checked = false;
+                lastQuestionSubmitTime = Date.now();
+                alert('Question submitted successfully! You can now edit your question or wait for an answer.');
+            } catch (error) {
+                console.error('Error submitting question:', error);
+                alert('Failed to submit question. Please try again.');
+            }
+        }
+
+        // Load questions from Firestore
+        async function loadQuestions() {
+            const container = document.getElementById('questions-container');
+            
+            db.collection('questions').orderBy('createdAt', 'desc').onSnapshot(async snapshot => {
+                container.innerHTML = '';
+                
+                for (const doc of snapshot.docs) {
+                    const data = doc.data();
+                    const questionCard = await createQuestionCard(doc.id, data);
+                    container.appendChild(questionCard);
+                }
+            });
+        }
+
+        // Create question card
+        async function createQuestionCard(id, data) {
+            
+            const card = document.createElement('div');
+            card.className = 'question-card bg-[#09030e] p-6 rounded-lg border border-gray-600';
+            
+            const isAdmin = userRole === 'admin';
+            const hasAnswer = data.answers && data.answers.length > 0;
+            const isAuthor = data.authorId === currentUser?.uid;
+            const isPending = data.status === 'pending';
+            
+            // Determine display name based on user role and anonymity
+            let displayName = data.displayName || data.authorName;
+            if (!isAdmin && data.isAnonymous) {
+                displayName = 'Anonymous Student';
+            }
+            
+            // Get user's vote for this question
+            let userVote = 0;
+            if (currentUser && !isAuthor) {
+                try {
+                    const userVoteDoc = await db.collection('userVotes').doc(`${currentUser.uid}_${id}`).get();
+                    if (userVoteDoc.exists) {
+                        userVote = userVoteDoc.data().vote;
+                    }
+                } catch (error) {
+                    console.error('Error getting user vote:', error);
+                }
+            }
+            
+            const upvoteClass = userVote === 1 ? 'text-green-300' : 'text-green-400 hover:text-green-300';
+            const downvoteClass = userVote === -1 ? 'text-red-300' : 'text-red-400 hover:text-red-300';
+            const voteDisabled = isAuthor ? 'opacity-50 cursor-not-allowed' : '';
+            
+            card.innerHTML = `
+                <div class="flex justify-between items-start mb-4">
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between mb-2">
+                            <h4 class="font-bold text-lg text-white">${data.title}</h4>
+                            <div class="flex items-center space-x-2">
+                                ${isAuthor && isPending ? `
+                                    <button onclick="editQuestion('${id}')" class="text-blue-400 hover:text-blue-300 text-sm bg-blue-900/20 px-2 py-1 rounded-md transition-colors duration-200">
+                                        ✏️ Edit
+                                    </button>
+                                ` : ''}
+                                ${isAdmin ? `
+                                    <button onclick="deleteQuestion('${id}')" class="text-red-400 hover:text-red-300 text-sm bg-red-900/20 px-2 py-1 rounded-md transition-colors duration-200">
+                                        🗑️ Delete
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                        <p class="text-gray-300 mb-3">${data.details}</p>
+                        <div class="flex items-center text-sm text-gray-400">
+                            <span>Asked by: ${displayName}</span>
+                            <span class="mx-2">•</span>
+                            <span>${data.createdAt ? new Date(data.createdAt.toDate()).toLocaleDateString() : 'Just now'}</span>
+                            ${isAuthor ? '<span class="mx-2">•</span><span class="text-blue-400">Your question</span>' : ''}
+                            ${isPending ? '<span class="mx-2">•</span><span class="text-yellow-400">Pending</span>' : ''}
+                            ${isAdmin && data.isAnonymous ? '<span class="mx-2">•</span><span class="text-orange-400">Anonymous</span>' : ''}
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-center ml-4" data-id="${id}">
+                        <button class="vote-btn upvote-btn ${upvoteClass} text-xl mb-1 ${voteDisabled} cursor-pointer" ${isAuthor ? 'disabled' : ''}>▲</button>
+                        <span class="vote-count font-bold text-white" id="vote-count-${id}">${data.votes || 0}</span>
+                        <button class="vote-btn downvote-btn ${downvoteClass} text-xl mt-1 ${voteDisabled} cursor-pointer" ${isAuthor ? 'disabled' : ''}>▼</button>
+                    </div>
+                </div>
+                
+                ${hasAnswer ? `
+                    <div class="mt-4 p-4 bg-gradient-to-r from-[#1d0a2d] to-[#2a0a3d] rounded-xl border border-gray-600 shadow-lg">
+                        <div class="flex items-center mb-3">
+                            <div class="w-8 h-8 bg-[#9b51e0] rounded-full flex items-center justify-center mr-3">
+                                <span class="text-white text-sm font-bold">A</span>
+                            </div>
+                            <h5 class="font-bold text-[#9b51e0]">Answer from ${data.answers[0].authorName}</h5>
+                        </div>
+                        <p class="text-gray-300 leading-relaxed">${data.answers[0].text}</p>
+                        <div class="flex items-center justify-between mt-3 pt-3 border-t border-gray-600">
+                            <span class="text-xs text-gray-400">Answered on ${data.answers[0].createdAt ? new Date(data.answers[0].createdAt).toLocaleDateString() : 'Just now'}</span>
+                            ${isAdmin ? `
+                                <button onclick="deleteAnswer('${id}')" class="text-red-400 hover:text-red-300 text-xs bg-red-900/20 px-2 py-1 rounded transition-colors duration-200">
+                                    Delete Answer
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                ` : ''}
+                
+                ${isAdmin && !hasAnswer ? `
+                    <div class="mt-4 p-4 bg-gradient-to-r from-[#1a0a2d] to-[#2a0a3d] rounded-xl border border-gray-600">
+                        <h5 class="font-bold text-[#9b51e0] mb-3">Write an Answer</h5>
+                        <textarea id="answer-${id}" rows="4" placeholder="Provide a helpful and detailed answer..." class="w-full px-4 py-3 bg-[#09030e] border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9b51e0] transition-all text-gray-300"></textarea>
+                        <div class="flex justify-end mt-3">
+                            <button onclick="submitAnswer('${id}')" class="bg-[#9b51e0] text-white px-6 py-2 rounded-lg hover:bg-[#8545c2] transition-colors duration-300 font-medium">
+                                Submit Answer
+                            </button>
+                        </div>
+                    </div>
+                ` : ''}
+            `;
+
+            // Add vote event listeners only if user is not the author
+            if (!isAuthor) {
+                const upvoteBtn = card.querySelector('.upvote-btn');
+                const downvoteBtn = card.querySelector('.downvote-btn');
+                
+                console.log('Setting up vote listeners for question', id, { upvoteBtn: !!upvoteBtn, downvoteBtn: !!downvoteBtn });
+                console.log('Card HTML structure:', card.innerHTML);
+                console.log('All buttons in card:', card.querySelectorAll('button'));
+                console.log('All upvote buttons in card:', card.querySelectorAll('.upvote-btn'));
+                console.log('All downvote buttons in card:', card.querySelectorAll('.downvote-btn'));
+                
+                if (upvoteBtn) {
+                    upvoteBtn.addEventListener('click', (e) => {
+                        console.log('Upvote button clicked for question', id);
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleVote(id, 1);
+                    });
+                    console.log('✅ Upvote listener attached for question', id);
+                } else {
+                    console.log('❌ Upvote button not found for question', id);
+                }
+                
+                if (downvoteBtn) {
+                    downvoteBtn.addEventListener('click', (e) => {
+                        console.log('Downvote button clicked for question', id);
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleVote(id, -1);
+                    });
+                    console.log('✅ Downvote listener attached for question', id);
+                } else {
+                    console.log('❌ Downvote button not found for question', id);
+                }
+            } else {
+                console.log('Skipping vote listeners for question', id, '- user is author');
+            }
+
+            return card;
+        }
+
+        // Handle voting
+        async function handleVote(questionId, voteChange) {
+            console.log('=== VOTE OPERATION START ===');
+            console.log('handleVote called with:', { questionId, voteChange, currentUser: currentUser?.uid });
+            
+            if (!currentUser) {
+                console.log('❌ No current user - cannot vote');
+                alert('Please log in to vote.');
+                return;
+            }
+
+            if (!db) {
+                console.log('❌ Firebase database not available');
+                alert('Database connection error. Please refresh the page.');
+                return;
+            }
+
+            try {
+                console.log('🔍 Step 1: Checking if user is voting on their own question...');
+                // Check if user is voting on their own question
+                const questionDoc = await db.collection('questions').doc(questionId).get();
+                
+                if (!questionDoc.exists) {
+                    console.log('❌ Question not found in database');
+                    alert('Question not found. Please refresh the page.');
+                    return;
+                }
+                
+                const questionData = questionDoc.data();
+                console.log('Question data:', questionData);
+                
+                if (questionData.authorId === currentUser.uid) {
+                    console.log('❌ User trying to vote on their own question');
+                    alert('You cannot vote on your own question.');
+                    return;
+                }
+
+                console.log('🔍 Step 2: Checking existing vote...');
+                // Check if user has already voted on this question
+                const userVoteDocRef = db.collection('userVotes').doc(`${currentUser.uid}_${questionId}`);
+                const userVoteDoc = await userVoteDocRef.get();
+                console.log('User vote doc exists:', userVoteDoc.exists);
+                
+                if (userVoteDoc.exists) {
+                    const existingVote = userVoteDoc.data().vote;
+                    console.log('Existing vote:', existingVote);
+                    
+                    // If user is trying to vote the same way again, remove the vote
+                    if (existingVote === voteChange) {
+                        console.log('🔄 Removing vote...');
+                        // Remove the vote
+                        await userVoteDocRef.delete();
+                        console.log('✅ User vote deleted');
+                        
+                        await db.collection('questions').doc(questionId).update({
+                            votes: firebase.firestore.FieldValue.increment(-voteChange)
+                        });
+                        console.log('✅ Question votes decremented');
+                        
+                        updateVoteDisplay(questionId, 0);
+                    } else {
+                        console.log('🔄 Changing vote...');
+                        // User is changing their vote
+                        await userVoteDocRef.update({
+                            vote: voteChange,
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                        console.log('✅ User vote updated');
+                        
+                        await db.collection('questions').doc(questionId).update({
+                            votes: firebase.firestore.FieldValue.increment(voteChange - existingVote)
+                        });
+                        console.log('✅ Question votes updated');
+                        
+                        updateVoteDisplay(questionId, voteChange);
+                    }
+                } else {
+                    console.log('🆕 First time voting...');
+                    // First time voting on this question
+                    const voteData = {
+                        userId: currentUser.uid,
+                        questionId: questionId,
+                        vote: voteChange,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    };
+                    
+                    console.log('Creating vote document with data:', voteData);
+                    await userVoteDocRef.set(voteData);
+                    console.log('✅ User vote created');
+                    
+                    console.log('Updating question votes in database...');
+                    await db.collection('questions').doc(questionId).update({
+                        votes: firebase.firestore.FieldValue.increment(voteChange)
+                    });
+                    console.log('✅ Question votes updated successfully');
+                    
+                    console.log('Calling updateVoteDisplay...');
+                    updateVoteDisplay(questionId, voteChange);
+                }
+                console.log('✅ Vote operation completed successfully');
+                
+                // Show success feedback
+                const voteText = voteChange === 1 ? 'upvoted' : 'downvoted';
+                console.log(`Successfully ${voteText} question ${questionId}`);
+                
+            } catch (error) {
+                console.error('❌ Error voting:', error);
+                console.error('Error details:', {
+                    code: error.code,
+                    message: error.message,
+                    stack: error.stack
+                });
+                
+                // Provide more specific error messages
+                if (error.code === 'permission-denied') {
+                    alert('Permission denied. You may not have the right to vote on this question.');
+                } else if (error.code === 'unavailable') {
+                    alert('Database is currently unavailable. Please try again later.');
+                } else {
+                    alert(`Failed to vote: ${error.message}`);
+                }
+            }
+        }
+
+        // Update vote display after voting
+        function updateVoteDisplay(questionId, userVote) {
+            console.log('=== UPDATE VOTE DISPLAY ===');
+            console.log('updateVoteDisplay called with:', { questionId, userVote });
+            
+            // Find the question card first, then find buttons within it
+            const dataIdElement = document.querySelector(`[data-id="${questionId}"]`);
+            console.log('Data ID element found:', !!dataIdElement);
+            
+            if (!dataIdElement) {
+                console.log('❌ Data ID element not found for question ID:', questionId);
+                console.log('All data-id elements:', document.querySelectorAll('[data-id]'));
+                return;
+            }
+            
+            const questionCard = dataIdElement.closest('.question-card');
+            if (!questionCard) {
+                console.log('❌ Question card not found for ID:', questionId);
+                console.log('All question cards:', document.querySelectorAll('.question-card'));
+                return;
+            }
+            
+            const upvoteBtn = questionCard.querySelector('.upvote-btn');
+            const downvoteBtn = questionCard.querySelector('.downvote-btn');
+            const voteCountSpan = questionCard.querySelector(`#vote-count-${questionId}`);
+            
+            console.log('Found elements:', { upvoteBtn: !!upvoteBtn, downvoteBtn: !!downvoteBtn, voteCountSpan: !!voteCountSpan });
+            
+            if (upvoteBtn && downvoteBtn) {
+                console.log('Updating button styles...');
+                // Reset classes first
+                upvoteBtn.className = upvoteBtn.className.replace(/text-green-[34]00/g, 'text-green-400');
+                downvoteBtn.className = downvoteBtn.className.replace(/text-red-[34]00/g, 'text-red-400');
+                
+                // Update button colors based on user's vote
+                if (userVote === 1) {
+                    upvoteBtn.className = upvoteBtn.className.replace('text-green-400', 'text-green-300');
+                    console.log('✅ Upvote button highlighted');
+                } else if (userVote === -1) {
+                    downvoteBtn.className = downvoteBtn.className.replace('text-red-400', 'text-red-300');
+                    console.log('✅ Downvote button highlighted');
+                } else {
+                    console.log('✅ Vote buttons reset to default');
+                }
+            } else {
+                console.log('❌ Vote buttons not found');
+            }
+            
+            // Update vote count if available
+            if (voteCountSpan) {
+                console.log('Updating vote count from database...');
+                // Get the current vote count from the database
+                db.collection('questions').doc(questionId).get().then(doc => {
+                    if (doc.exists) {
+                        const votes = doc.data().votes || 0;
+                        voteCountSpan.textContent = votes;
+                        console.log('✅ Updated vote count to:', votes);
+                    } else {
+                        console.log('❌ Question document not found in database');
+                    }
+                }).catch(error => {
+                    console.error('❌ Error updating vote count:', error);
+                });
+            } else {
+                console.log('❌ Vote count span not found');
+            }
+            
+            console.log('=== UPDATE VOTE DISPLAY COMPLETE ===');
+        }
+
+        // Submit answer (admin only)
+        async function submitAnswer(questionId) {
+            const answerText = document.getElementById(`answer-${questionId}`).value.trim();
+            
+            if (!answerText) {
+                alert('Please write an answer.');
+                return;
+            }
+            
+            // Basic input validation
+            if (answerText.length > 2000) {
+                alert('Answer is too long. Please keep it under 2000 characters.');
+                return;
+            }
+
+            if (!currentUser || userRole !== 'admin') {
+                alert('Only admins can submit answers.');
+                return;
+            }
+
+            try {
+                const answer = {
+                    text: answerText,
+                    authorId: currentUser.uid,
+                    authorName: currentUser.displayName || currentUser.email,
+                    createdAt: new Date().toISOString()
+                };
+
+                await db.collection('questions').doc(questionId).update({
+                    answers: firebase.firestore.FieldValue.arrayUnion(answer),
+                    status: 'answered'
+                });
+
+                document.getElementById(`answer-${questionId}`).value = '';
+                alert('Answer submitted successfully! The question is now marked as answered.');
+            } catch (error) {
+                console.error('Error submitting answer:', error);
+                alert('Failed to submit answer. Please try again.');
+            }
+        }
+
+        // Delete question (admin or question author for pending questions)
+        async function deleteQuestion(questionId) {
+            
+            if (!currentUser) {
+                alert('Please log in to delete questions.');
+                return;
+            }
+
+            try {
+                const questionDoc = await db.collection('questions').doc(questionId).get();
+                const questionData = questionDoc.data();
+                
+                const isAuthor = questionData.authorId === currentUser.uid;
+                const isAdmin = userRole === 'admin';
+                const isPending = questionData.status === 'pending';
+                
+                if (!isAdmin && !(isAuthor && isPending)) {
+                    alert('You can only delete your own pending questions or admins can delete any question.');
+                    return;
+                }
+
+                if (!confirm('Are you sure you want to delete this question? This action cannot be undone.')) {
+                    return;
+                }
+
+                await db.collection('questions').doc(questionId).delete();
+                
+                // If this was a pending question, refresh the form
+                if (isAuthor && isPending) {
+                    checkPendingQuestions();
+                }
+                
+                alert('Question deleted successfully!');
+            } catch (error) {
+                console.error('Error deleting question:', error);
+                alert('Failed to delete question. Please try again.');
+            }
+        }
+
+        // Edit question (author only, pending questions only)
+        async function editQuestion(questionId) {
+            if (!currentUser) {
+                alert('Please log in to edit questions.');
+                return;
+            }
+
+            try {
+                const questionDoc = await db.collection('questions').doc(questionId).get();
+                const questionData = questionDoc.data();
+                
+                if (questionData.authorId !== currentUser.uid) {
+                    alert('You can only edit your own questions.');
+                    return;
+                }
+                
+                if (questionData.status !== 'pending') {
+                    alert('You can only edit pending questions.');
+                    return;
+                }
+
+                // Show edit form
+                const editFormHTML = `
+                    <div class="mt-4 p-4 bg-gradient-to-r from-[#1a0a2d] to-[#2a0a3d] rounded-xl border border-gray-600">
+                        <h5 class="font-bold text-[#9b51e0] mb-3">Edit Your Question</h5>
+                        <form id="edit-question-form-${questionId}" class="space-y-4">
+                            <div>
+                                <label for="edit-title-${questionId}" class="block text-left text-sm font-medium text-gray-300 mb-1">
+                                    Question Title
+                                </label>
+                                <input
+                                    type="text"
+                                    id="edit-title-${questionId}"
+                                    value="${questionData.title}"
+                                    required
+                                    class="w-full px-4 py-2 bg-[#09030e] border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#9b51e0] transition-all"
+                                />
+                            </div>
+                            <div>
+                                <label for="edit-details-${questionId}" class="block text-left text-sm font-medium text-gray-300 mb-1">
+                                    Details
+                                </label>
+                                <textarea
+                                    id="edit-details-${questionId}"
+                                    rows="4"
+                                    required
+                                    class="w-full px-4 py-3 bg-[#09030e] border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9b51e0] transition-all text-gray-300"
+                                >${questionData.details}</textarea>
+                            </div>
+                            <div class="flex space-x-3">
+                                <button
+                                    type="submit"
+                                    class="bg-[#9b51e0] text-white px-6 py-2 rounded-lg hover:bg-[#8545c2] transition-colors duration-300 font-medium"
+                                >
+                                    Update Question
+                                </button>
+                                <button
+                                    type="button"
+                                    onclick="cancelEdit('${questionId}')"
+                                    class="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition-colors duration-300 font-medium"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                `;
+                
+                // Find the question card and add the edit form
+                const questionCard = document.querySelector(`[data-id="${questionId}"]`).closest('.question-card');
+                const existingEditForm = questionCard.querySelector('.edit-form');
+                if (existingEditForm) {
+                    existingEditForm.remove();
+                }
+                
+                const editFormDiv = document.createElement('div');
+                editFormDiv.className = 'edit-form';
+                editFormDiv.innerHTML = editFormHTML;
+                questionCard.appendChild(editFormDiv);
+                
+                // Add event listener for the edit form
+                document.getElementById(`edit-question-form-${questionId}`).addEventListener('submit', (e) => handleEditSubmit(e, questionId));
+                
+            } catch (error) {
+                console.error('Error editing question:', error);
+                alert('Failed to load question for editing. Please try again.');
+            }
+        }
+
+        // Handle edit form submission
+        async function handleEditSubmit(e, questionId) {
+            e.preventDefault();
+            const title = document.getElementById(`edit-title-${questionId}`).value.trim();
+            const details = document.getElementById(`edit-details-${questionId}`).value.trim();
+            
+            if (!title || !details) {
+                alert('Please fill in both title and details.');
+                return;
+            }
+            
+            // Basic input validation
+            if (title.length > 200) {
+                alert('Question title is too long. Please keep it under 200 characters.');
+                return;
+            }
+            
+            if (details.length > 2000) {
+                alert('Question details are too long. Please keep it under 2000 characters.');
+                return;
+            }
+
+            try {
+                await db.collection('questions').doc(questionId).update({
+                    title: title,
+                    details: details,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                alert('Question updated successfully!');
+            } catch (error) {
+                console.error('Error updating question:', error);
+                alert('Failed to update question. Please try again.');
+            }
+        }
+
+        // Cancel edit form
+        function cancelEdit(questionId) {
+            const editForm = document.querySelector(`#edit-question-form-${questionId}`).closest('.edit-form');
+            if (editForm) {
+                editForm.remove();
+            }
+        }
+
+        // Delete answer (admin only)
+        async function deleteAnswer(questionId) {
+            
+            if (!currentUser || userRole !== 'admin') {
+                alert('Only admins can delete answers.');
+                return;
+            }
+
+            if (!confirm('Are you sure you want to delete this answer? This action cannot be undone.')) {
+                return;
+            }
+
+            try {
+                // Get the current question to remove the answer
+                const questionDoc = await db.collection('questions').doc(questionId).get();
+                const questionData = questionDoc.data();
+                
+                if (questionData.answers && questionData.answers.length > 0) {
+                    // Remove the first answer (assuming single answer per question)
+                    const updatedAnswers = questionData.answers.slice(1);
+                    
+                    await db.collection('questions').doc(questionId).update({
+                        answers: updatedAnswers
                     });
                     
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    
-                    const result = await response.json();
-                    
-                    let answer = "Sorry, I couldn't generate a response. Please try again.";
-                    if (result.candidates && result.candidates.length > 0 &&
-                        result.candidates[0].content && result.candidates[0].content.parts &&
-                        result.candidates[0].content.parts.length > 0) {
-                        answer = result.candidates[0].content.parts[0].text;
-                    }
-
-                    // Put the final answer into the modal for the user to see
-                    modalContent.innerHTML = `<p class="text-gray-300 whitespace-pre-wrap">${answer}</p>`;
-                } catch (error) {
-                    console.error("Error calling Gemini API:", error);
-                    // Uh oh, something went wrong, let's tell the user
-                    modalContent.innerHTML = `<p class="text-red-400">An error occurred. Please try again later.</p>`;
+                    alert('Answer deleted successfully!');
                 }
-            };
-            
-            // This is for closing the pop-up modal
-            document.getElementById('close-modal').addEventListener('click', () => {
-                aiModal.classList.add('hidden');
-            });
-            
-            // The first thing we do when the page loads is check if the user is registered or not
-            if (isRegistered) {
-                renderDashboard();
-            } else {
-                renderRegistrationForm();
+            } catch (error) {
+                console.error('Error deleting answer:', error);
+                alert('Failed to delete answer. Please try again.');
+            }
+        }
+
+        // Logout functionality
+        logoutBtn.addEventListener('click', async () => {
+            try {
+                await auth.signOut();
+            } catch (error) {
+                console.error('Logout error:', error);
             }
         });
 
-        // =======================================================
-        // This is the code for the cool animated background!
-        // =======================================================
+        // Load announcements from Firestore
+        function loadAnnouncements() {
+            const container = document.getElementById('announcements-container');
+            
+            db.collection('announcements').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
+                container.innerHTML = '';
+                
+                if (snapshot.empty) {
+                    container.innerHTML = `
+                        <div class="text-center py-8 text-gray-400">
+                            <p>No announcements yet.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const announcementCard = createAnnouncementCard(doc.id, data);
+                    container.appendChild(announcementCard);
+                });
+            });
+        }
+
+        // Create announcement card
+        function createAnnouncementCard(id, data) {
+            const card = document.createElement('div');
+            card.className = 'bg-[#09030e] p-6 rounded-lg border border-gray-600';
+            
+            const isAdmin = userRole === 'admin';
+            
+            card.innerHTML = `
+                <div class="flex justify-between items-start mb-4">
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between mb-2">
+                            <h4 class="font-bold text-lg text-white">${data.title}</h4>
+                            ${isAdmin ? `
+                                <button onclick="deleteAnnouncement('${id}')" class="text-red-400 hover:text-red-300 text-sm bg-red-900/20 px-2 py-1 rounded-md transition-colors duration-200">
+                                    🗑️ Delete
+                                </button>
+                            ` : ''}
+                        </div>
+                        <p class="text-gray-300 mb-3">${data.content}</p>
+                        <div class="flex items-center text-sm text-gray-400">
+                            <span>Posted by: ${data.authorName}</span>
+                            <span class="mx-2">•</span>
+                            <span>${data.createdAt ? new Date(data.createdAt.toDate()).toLocaleDateString() : 'Just now'}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        // Show announcement form (admin only)
+        function showAnnouncementForm() {
+            if (userRole !== 'admin') {
+                alert('Only admins can create announcements.');
+                return;
+            }
+
+            const container = document.getElementById('announcements-container');
+            const formHTML = `
+                <div class="bg-[#09030e] p-6 rounded-lg border border-gray-600">
+                    <h5 class="font-bold text-[#9b51e0] mb-4">Create New Announcement</h5>
+                    <form id="announcement-form" class="space-y-4">
+                        <div>
+                            <label for="announcement-title" class="block text-left text-sm font-medium text-gray-300 mb-1">
+                                Announcement Title
+                            </label>
+                            <input
+                                type="text"
+                                id="announcement-title"
+                                placeholder="Enter announcement title..."
+                                required
+                                class="w-full px-4 py-2 bg-[#1d0a2d] border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#9b51e0] transition-all"
+                            />
+                        </div>
+                        <div>
+                            <label for="announcement-content" class="block text-left text-sm font-medium text-gray-300 mb-1">
+                                Announcement Content
+                            </label>
+                            <textarea
+                                id="announcement-content"
+                                rows="4"
+                                placeholder="Enter announcement content..."
+                                required
+                                class="w-full px-4 py-3 bg-[#1d0a2d] border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9b51e0] transition-all"
+                            ></textarea>
+                        </div>
+                        <div class="flex space-x-3">
+                            <button
+                                type="submit"
+                                class="bg-[#9b51e0] text-white px-6 py-2 rounded-lg hover:bg-[#8545c2] transition-colors duration-300 font-medium"
+                            >
+                                Post Announcement
+                            </button>
+                            <button
+                                type="button"
+                                onclick="cancelAnnouncementForm()"
+                                class="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition-colors duration-300 font-medium"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            
+            container.insertAdjacentHTML('afterbegin', formHTML);
+            
+            // Add event listener
+            document.getElementById('announcement-form').addEventListener('submit', handleAnnouncementSubmit);
+        }
+
+        // Cancel announcement form
+        function cancelAnnouncementForm() {
+            const form = document.getElementById('announcement-form');
+            if (form) {
+                form.parentElement.remove();
+            }
+        }
+
+        // Handle announcement submission
+        async function handleAnnouncementSubmit(e) {
+            e.preventDefault();
+            const title = document.getElementById('announcement-title').value.trim();
+            const content = document.getElementById('announcement-content').value.trim();
+            
+            if (!title || !content) {
+                alert('Please fill in both title and content.');
+                return;
+            }
+            
+            // Basic input validation
+            if (title.length > 200) {
+                alert('Announcement title is too long. Please keep it under 200 characters.');
+                return;
+            }
+            
+            if (content.length > 2000) {
+                alert('Announcement content is too long. Please keep it under 2000 characters.');
+                return;
+            }
+
+            if (userRole !== 'admin') {
+                alert('Only admins can create announcements.');
+                return;
+            }
+
+            try {
+                await db.collection('announcements').add({
+                    title,
+                    content,
+                    authorId: currentUser.uid,
+                    authorName: currentUser.displayName || currentUser.email,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                // Remove the form
+                cancelAnnouncementForm();
+                alert('Announcement posted successfully!');
+            } catch (error) {
+                console.error('Error posting announcement:', error);
+                alert('Failed to post announcement. Please try again.');
+            }
+        }
+
+        // Delete announcement (admin only)
+        async function deleteAnnouncement(announcementId) {
+            if (userRole !== 'admin') {
+                alert('Only admins can delete announcements.');
+                return;
+            }
+
+            if (!confirm('Are you sure you want to delete this announcement? This action cannot be undone.')) {
+                return;
+            }
+
+            try {
+                await db.collection('announcements').doc(announcementId).delete();
+                alert('Announcement deleted successfully!');
+            } catch (error) {
+                console.error('Error deleting announcement:', error);
+                alert('Failed to delete announcement. Please try again.');
+            }
+        }
+
+        // Check for pending questions
+        async function checkPendingQuestions() {
+            if (!currentUser || userRole !== 'student') {
+                return;
+            }
+
+            try {
+                const pendingQuestions = await db.collection('questions')
+                    .where('authorId', '==', currentUser.uid)
+                    .where('status', '==', 'pending')
+                    .get();
+                
+                const questionFormContainer = document.getElementById('question-form-container');
+                
+                if (!pendingQuestions.empty) {
+                    const pendingQuestion = pendingQuestions.docs[0].data();
+                    questionFormContainer.innerHTML = `
+                        <div class="bg-gradient-to-r from-yellow-900/20 to-orange-900/20 p-6 rounded-xl border border-yellow-600">
+                            <div class="flex items-center mb-4">
+                                <div class="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center mr-3">
+                                    <span class="text-white text-sm font-bold">⏳</span>
+                                </div>
+                                <h4 class="font-bold text-yellow-400">You have a pending question</h4>
+                            </div>
+                            <p class="text-gray-300 mb-3">You already have a question waiting for an answer. You can edit your question or wait for an admin to respond.</p>
+                            <div class="bg-[#09030e] p-4 rounded-lg border border-gray-600">
+                                <h5 class="font-bold text-white mb-2">${pendingQuestion.title}</h5>
+                                <p class="text-gray-300 text-sm">${pendingQuestion.details}</p>
+                                <div class="flex items-center mt-3 text-xs text-gray-400">
+                                    <span>Posted: ${pendingQuestion.createdAt ? new Date(pendingQuestion.createdAt.toDate()).toLocaleDateString() : 'Just now'}</span>
+                                    ${pendingQuestion.isAnonymous ? '<span class="mx-2">•</span><span class="text-orange-400">Anonymous</span>' : ''}
+                                </div>
+                            </div>
+                            <div class="mt-4 flex space-x-3">
+                                <button onclick="editQuestion('${pendingQuestions.docs[0].id}')" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-300 font-medium">
+                                    Edit Question
+                                </button>
+                                <button onclick="deleteQuestion('${pendingQuestions.docs[0].id}')" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors duration-300 font-medium">
+                                    Delete Question
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error checking pending questions:', error);
+            }
+        }
+
+        // Test voting system
+        async function testVotingSystem() {
+            console.log('=== VOTING SYSTEM TEST ===');
+            console.log('Current user:', currentUser);
+            console.log('User role:', userRole);
+            console.log('Firebase auth available:', !!auth);
+            console.log('Firebase db available:', !!db);
+            
+            if (!currentUser) {
+                console.log('❌ No current user - cannot test voting');
+                alert('Please log in first to test the voting system.');
+                return;
+            }
+            
+            if (!db) {
+                console.log('❌ Firebase database not available');
+                alert('Database connection error. Please refresh the page.');
+                return;
+            }
+            
+            try {
+                // Test database connection
+                console.log('Testing database connection...');
+                const testDoc = await db.collection('test').doc('connection').get();
+                console.log('✅ Database connection successful');
+                
+                // Test if questions collection exists and has data
+                console.log('Testing questions collection...');
+                const questionsSnapshot = await db.collection('questions').limit(1).get();
+                console.log('✅ Questions collection accessible, count:', questionsSnapshot.size);
+                
+                if (questionsSnapshot.size > 0) {
+                    const firstQuestion = questionsSnapshot.docs[0];
+                    console.log('First question ID:', firstQuestion.id);
+                    console.log('First question data:', firstQuestion.data());
+                    
+                    // Test if we can read the question
+                    const questionData = firstQuestion.data();
+                    console.log('Question author ID:', questionData.authorId);
+                    console.log('Current user ID:', currentUser.uid);
+                    console.log('Can user vote on this question:', questionData.authorId !== currentUser.uid);
+                } else {
+                    console.log('⚠️ No questions found in database');
+                }
+                
+                // Test userVotes collection
+                console.log('Testing userVotes collection...');
+                const userVotesSnapshot = await db.collection('userVotes').limit(1).get();
+                console.log('✅ UserVotes collection accessible, count:', userVotesSnapshot.size);
+                
+                // Test write permissions by trying to create a test document
+                console.log('Testing write permissions...');
+                const testVoteRef = db.collection('userVotes').doc(`test_${Date.now()}`);
+                await testVoteRef.set({
+                    userId: currentUser.uid,
+                    questionId: 'test',
+                    vote: 1,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    isTest: true
+                });
+                console.log('✅ Write permission test successful');
+                
+                // Clean up test document
+                await testVoteRef.delete();
+                console.log('✅ Test document cleaned up');
+                
+                // Test question update permissions
+                if (questionsSnapshot.size > 0) {
+                    const firstQuestionId = questionsSnapshot.docs[0].id;
+                    console.log('Testing question update permissions...');
+                    const questionRef = db.collection('questions').doc(firstQuestionId);
+                    const currentData = (await questionRef.get()).data();
+                    const currentVotes = currentData.votes || 0;
+                    
+                    // Try to increment votes
+                    await questionRef.update({
+                        votes: firebase.firestore.FieldValue.increment(1)
+                    });
+                    console.log('✅ Question update permission test successful');
+                    
+                    // Restore original vote count
+                    await questionRef.update({
+                        votes: currentVotes
+                    });
+                    console.log('✅ Vote count restored');
+                }
+                
+                console.log('🎉 All voting system tests passed!');
+                alert('Voting system test completed successfully! Check console for details.');
+                
+            } catch (error) {
+                console.error('❌ Test failed:', error);
+                console.error('Error details:', {
+                    code: error.code,
+                    message: error.message,
+                    stack: error.stack
+                });
+                
+                if (error.code === 'permission-denied') {
+                    alert('❌ Permission denied. Check Firebase security rules.');
+                } else if (error.code === 'unavailable') {
+                    alert('❌ Database unavailable. Check your internet connection.');
+                } else {
+                    alert(`❌ Test failed: ${error.message}`);
+                }
+            }
+        }
+
+        // Add test button to the page
+        function addTestButton() {
+            const testBtn = document.createElement('button');
+            testBtn.textContent = 'Test Voting System';
+            testBtn.className = 'fixed top-20 right-4 bg-red-600 text-white px-4 py-2 rounded z-50';
+            testBtn.onclick = testVotingSystem;
+            document.body.appendChild(testBtn);
+            
+            // Add a second button for quick vote test
+            const quickTestBtn = document.createElement('button');
+            quickTestBtn.textContent = 'Quick Vote Test';
+            quickTestBtn.className = 'fixed top-20 right-48 bg-blue-600 text-white px-4 py-2 rounded z-50';
+            quickTestBtn.onclick = quickVoteTest;
+            document.body.appendChild(quickTestBtn);
+            
+            // Add a third button for Firebase rules check
+            const rulesTestBtn = document.createElement('button');
+            rulesTestBtn.textContent = 'Check Firebase Rules';
+            rulesTestBtn.className = 'fixed top-20 right-80 bg-green-600 text-white px-4 py-2 rounded z-50';
+            rulesTestBtn.onclick = checkFirebaseRules;
+            document.body.appendChild(rulesTestBtn);
+        }
+        
+        // Quick vote test function
+        async function quickVoteTest() {
+            console.log('=== QUICK VOTE TEST ===');
+            
+            if (!currentUser) {
+                alert('Please log in first.');
+                return;
+            }
+            
+            if (!db) {
+                alert('Database not available.');
+                return;
+            }
+            
+            try {
+                // Get the first available question
+                const questionsSnapshot = await db.collection('questions').limit(1).get();
+                
+                if (questionsSnapshot.empty) {
+                    alert('No questions available for testing.');
+                    return;
+                }
+                
+                const firstQuestion = questionsSnapshot.docs[0];
+                const questionId = firstQuestion.id;
+                const questionData = firstQuestion.data();
+                
+                console.log('Testing vote on question:', questionId);
+                console.log('Question author:', questionData.authorId);
+                console.log('Current user:', currentUser.uid);
+                
+                if (questionData.authorId === currentUser.uid) {
+                    alert('Cannot test voting on your own question. Please create another question first.');
+                    return;
+                }
+                
+                // Try to vote
+                await handleVote(questionId, 1);
+                console.log('Quick vote test completed');
+                
+            } catch (error) {
+                console.error('Quick vote test failed:', error);
+                alert(`Quick vote test failed: ${error.message}`);
+            }
+        }
+        
+        // Check Firebase security rules
+        async function checkFirebaseRules() {
+            console.log('=== FIREBASE RULES CHECK ===');
+            
+            if (!currentUser || !db) {
+                console.log('❌ User not logged in or database not available');
+                return;
+            }
+            
+            try {
+                // Test read access to questions
+                console.log('Testing read access to questions...');
+                await db.collection('questions').limit(1).get();
+                console.log('✅ Read access to questions: OK');
+                
+                // Test read access to userVotes
+                console.log('Testing read access to userVotes...');
+                await db.collection('userVotes').limit(1).get();
+                console.log('✅ Read access to userVotes: OK');
+                
+                // Test write access to userVotes
+                console.log('Testing write access to userVotes...');
+                const testVoteId = `test_${Date.now()}`;
+                const testVoteData = {
+                    userId: currentUser.uid,
+                    questionId: 'test',
+                    vote: 1,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    isTest: true
+                };
+                
+                await db.collection('userVotes').doc(testVoteId).set(testVoteData);
+                console.log('✅ Write access to userVotes: OK');
+                
+                // Clean up test data
+                await db.collection('userVotes').doc(testVoteId).delete();
+                console.log('✅ Test data cleaned up');
+                
+                // Test update access to questions
+                console.log('Testing update access to questions...');
+                const questionsSnapshot = await db.collection('questions').limit(1).get();
+                if (!questionsSnapshot.empty) {
+                    const questionId = questionsSnapshot.docs[0].id;
+                    const questionRef = db.collection('questions').doc(questionId);
+                    const currentData = (await questionRef.get()).data();
+                    const currentVotes = currentData.votes || 0;
+                    
+                    await questionRef.update({
+                        votes: firebase.firestore.FieldValue.increment(1)
+                    });
+                    console.log('✅ Update access to questions: OK');
+                    
+                    // Restore original value
+                    await questionRef.update({
+                        votes: currentVotes
+                    });
+                    console.log('✅ Question data restored');
+                } else {
+                    console.log('⚠️ No questions available for update test');
+                }
+                
+                console.log('🎉 All Firebase rules tests passed!');
+                alert('Firebase security rules are properly configured!');
+                
+            } catch (error) {
+                console.error('❌ Firebase rules test failed:', error);
+                console.error('Error details:', {
+                    code: error.code,
+                    message: error.message
+                });
+                
+                if (error.code === 'permission-denied') {
+                    alert('❌ Permission denied. Your Firebase security rules need to be updated to allow voting operations.');
+                } else {
+                    alert(`❌ Firebase rules test failed: ${error.message}`);
+                }
+            }
+        }
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', () => {
+            // Show loading state first
+            mainContent.innerHTML = `
+                <div class="flex flex-col items-center justify-center min-h-screen">
+                    <div class="text-center">
+                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[#9b51e0] mx-auto mb-4"></div>
+                        <p class="text-gray-300">Loading...</p>
+                    </div>
+                </div>
+            `;
+            
+            // Add test button for debugging
+            addTestButton();
+            
+            // Small delay to ensure everything is loaded
+            setTimeout(() => {
+                showLoginPage();
+            }, 500);
+        });
+
+        // Background Animation
         window.onload = function() {
-            // Step 1: Get the canvas element and its drawing context
             const canvas = document.getElementById('math-background');
             const ctx = canvas.getContext('2d');
-
-            let allTheSymbols = []; // This will hold all our moving symbols
+            let allTheSymbols = [];
             const coolMathStuff = ['∑', '∫', '∞', '∇', '∂', 'Φ', 'Ψ', 'Ω', 'μ', 'σ', 'ε', 'β', 'γ', 'α'];
-
-            // This function makes sure the canvas is the right size for the window
+            
             const resizeCanvas = () => {
                 canvas.width = window.innerWidth;
                 canvas.height = window.innerHeight;
             };
 
-            // This is a "blueprint" for a single moving symbol
             class MathSymbol {
                 constructor() {
                     this.reset();
                 }
-
-                // This function draws the symbol on the canvas
                 draw() {
-                    // Make the font size pulse to create a dynamic look
                     const pulsatingFontSize = this.baseFontSize + Math.sin(Date.now() * 0.0005 * this.pulseSpeed) * 3;
                     ctx.font = `${pulsatingFontSize}px 'Inter', sans-serif`;
                     ctx.fillStyle = `rgba(239, 191, 4, 0.1)`;
                     ctx.fillText(this.text, this.x, this.y);
                 }
-
-                // This function updates the symbol's position
                 update() {
-                    // Move the symbol based on its velocity
                     this.x += this.dx;
                     this.y += this.dy;
-
-                    // If a symbol goes off screen, reset its position to a random new location
-                    // This creates a continuous flow of symbols across the screen
-                    if (this.x < -this.baseFontSize || this.x > window.innerWidth + this.baseFontSize ||
-                        this.y < -this.baseFontSize || this.y > window.innerHeight + this.baseFontSize) {
+                    if (this.x < -this.baseFontSize || this.x > window.innerWidth + this.baseFontSize || this.y < -this.baseFontSize || this.y > window.innerHeight + this.baseFontSize) {
                         this.reset();
                     }
                 }
-
-                // This function puts the symbol back at a random position on the screen
                 reset() {
-                    // Start from a random position
                     this.x = Math.random() * window.innerWidth;
                     this.y = Math.random() * window.innerHeight;
-                    
-                    // Give it a random velocity
-                    this.dx = (Math.random() - 0.5) * 1; // Speed can be positive or negative
-                    this.dy = (Math.random() - 0.5) * 1; // Speed can be positive or negative
-
-                    // Reset other properties for a fresh start
+                    this.dx = (Math.random() - 0.5) * 1;
+                    this.dy = (Math.random() - 0.5) * 1;
                     this.baseFontSize = Math.random() * 20 + 10;
                     this.opacity = Math.random() * 0.5 + 0.1;
                     this.text = coolMathStuff[Math.floor(Math.random() * coolMathStuff.length)];
@@ -392,35 +1691,25 @@
                 }
             }
 
-            // Step 2: Create a bunch of symbols to start with
             const howManySymbols = 60;
             for (let i = 0; i < howManySymbols; i++) {
                 allTheSymbols.push(new MathSymbol());
             }
 
-            // Step 3: This is our main animation loop that runs forever
             const animate = () => {
-                // Instead of clearing the canvas, we draw a semi-transparent rectangle
-                // to create a cool trailing effect behind the symbols.
                 ctx.fillStyle = 'rgba(17, 5, 27, 0.6)';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
-                // Loop through all our symbols and update/draw them
                 for (let i = 0; i < allTheSymbols.length; i++) {
                     allTheSymbols[i].update();
                     allTheSymbols[i].draw();
                 }
-                
-                // Call this function again for the next frame
                 requestAnimationFrame(animate);
             };
 
-            // Step 4: Run everything!
-            resizeCanvas(); // Make sure the canvas is the right size at the beginning
-            window.addEventListener('resize', resizeCanvas); // Resize if the window changes
-            animate(); // Start the animation!
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            animate();
         };
     </script>
-
 </body>
 </html>
