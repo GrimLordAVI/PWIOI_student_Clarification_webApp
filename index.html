@@ -51,6 +51,89 @@
         .vote-btn:active {
             transform: scale(0.95);
         }
+        
+        /* Mobile-specific styles */
+        @media (max-width: 768px) {
+            .mobile-header {
+                padding: 0.5rem 1rem !important;
+            }
+            .mobile-title {
+                font-size: 1rem !important;
+            }
+            .mobile-user-info {
+                flex-direction: row;
+                gap: 0.5rem;
+                align-items: center;
+                flex-wrap: wrap;
+            }
+            .mobile-user-text {
+                font-size: 0.75rem;
+            }
+            .mobile-logout-btn {
+                padding: 0.375rem 0.5rem !important;
+                font-size: 0.75rem !important;
+            }
+            .mobile-hide-user-info {
+                display: none !important;
+            }
+            .mobile-main-padding {
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+                padding-top: 6rem !important;
+            }
+            .mobile-section-padding {
+                padding: 1.5rem !important;
+            }
+            .mobile-grid {
+                grid-template-columns: 1fr !important;
+                gap: 1.5rem !important;
+            }
+            .mobile-title-large {
+                font-size: 2rem !important;
+            }
+            .mobile-login-container {
+                min-height: auto !important;
+                padding: 2rem 1rem !important;
+            }
+            .mobile-login-spacing {
+                margin-bottom: 2rem !important;
+            }
+            .mobile-cart-scroll {
+                overflow-x: auto;
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+            }
+            .mobile-cart-scroll::-webkit-scrollbar {
+                display: none;
+            }
+            .mobile-cart-container {
+                min-width: max-content;
+                padding: 0 1rem;
+            }
+            .mobile-cart-card {
+                min-width: 280px;
+                margin-right: 1rem;
+            }
+            .mobile-question-layout {
+                flex-direction: column !important;
+            }
+            .mobile-vote-section {
+                flex-direction: row !important;
+                justify-content: center !important;
+                margin-top: 1rem !important;
+                margin-left: 0 !important;
+            }
+            .mobile-answer-section {
+                margin-top: 1rem !important;
+            }
+            .mobile-edit-buttons {
+                flex-direction: column !important;
+                gap: 0.5rem !important;
+            }
+            .mobile-edit-buttons button {
+                width: 100% !important;
+            }
+        }
     </style>
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -63,72 +146,74 @@
 
     <div id="content-wrapper" class="flex-grow flex flex-col min-h-screen">
         <!-- Header -->
-        <header class="w-full max-w-7xl mx-auto px-6 py-6 fixed top-0 left-1/2 -translate-x-1/2 z-20" style="width: 100vw; display: flex; justify-content: center; align-items: center; background-color: rgba(34, 14, 51, 0.2); backdrop-filter: blur(10px); border-radius: 5%;">
+        <header class="mobile-header w-full max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6 fixed top-0 left-1/2 -translate-x-1/2 z-20" style="width: 100vw; display: flex; justify-content: center; align-items: center; background-color: rgba(34, 14, 51, 0.2); backdrop-filter: blur(10px); border-radius: 5%;">
             <div class="flex items-center justify-between w-full">
-                <h1 class="text-xl font-bold flex-none pl-4">
+                <h1 class="mobile-title text-lg sm:text-xl font-bold flex-none pl-2 sm:pl-4">
                     <a href="#" class="hover:text-[#9b51e0]" onclick="showLoginPage()">PW Student to Student</a>
                 </h1>
-                <div id="user-info" class="hidden">
-                    <span id="user-name" class="mr-4 text-[#9b51e0]"></span>
-                    <span id="user-role" class="mr-4 text-gray-300"></span>
-                    <button id="logout-btn" class="bg-[#9b51e0] text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-[#8545c2] transition-colors duration-300">
+                <div id="user-info" class="hidden mobile-user-info">
+                    <span id="user-name" class="mobile-user-text mr-2 sm:mr-4 text-[#9b51e0] mobile-hide-user-info"></span>
+                    <span id="user-role" class="mobile-user-text mr-2 sm:mr-4 text-gray-300 mobile-hide-user-info"></span>
+                    <button id="logout-btn" class="mobile-logout-btn bg-[#9b51e0] text-white font-bold py-1.5 sm:py-2 px-3 sm:px-4 rounded-lg shadow-md hover:bg-[#8545c2] transition-colors duration-300">
                         Logout
                     </button>
                 </div>
             </div>
         </header>
 
-        <main id="main-content" class="flex-grow w-full max-w-7xl mx-auto px-4 pt-28 pb-20"></main>
+        <main id="main-content" class="mobile-main-padding flex-grow w-full max-w-7xl mx-auto px-4 pt-28 pb-20"></main>
     </div>
 
     <!-- Footer -->
-    <footer id="footer" class="text-center py-6 text-gray-400 text-sm bg-[#1d0a2d] border-t border-gray-700">
+    <footer id="footer" class="text-center py-4 sm:py-6 text-gray-400 text-sm bg-[#1d0a2d] border-t border-gray-700">
         &copy; 2025 PW Student to Student Platform. All rights reserved.
     </footer>
     </div>
 
     <!-- Admin Cart -->
-    <div id="admin-cart" class="hidden w-full h-32 bg-[#1d0a2d] border-t border-gray-700 z-30">
-        <div class="flex justify-center items-center h-full px-8">
-            <div class="flex space-x-8 items-center">
-                <div class="admin-card flex items-center space-x-4 bg-gradient-to-r from-[#09030e] to-[#1a0a2d] p-4 rounded-2xl border border-gray-600 shadow-lg">
-                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50&h=50&fit=crop&crop=face" alt="Admin" class="w-12 h-12 rounded-full ring-2 ring-[#9b51e0]">
-                    <div>
-                        <h4 class="font-bold text-[#9b51e0]">John Doe</h4>
-                        <p class="text-sm text-gray-400">Computer Science • 4th Year</p>
-                        <a href="#" class="text-xs text-blue-400 hover:underline">LinkedIn</a>
+    <div id="admin-cart" class="hidden w-full h-24 sm:h-32 bg-[#1d0a2d] border-t border-gray-700 z-30">
+        <div class="flex justify-center items-center h-full px-4 sm:px-8">
+            <div class="mobile-cart-scroll w-full">
+                <div class="mobile-cart-container flex space-x-4 sm:space-x-8 items-center">
+                    <div class="admin-card mobile-cart-card flex items-center space-x-3 sm:space-x-4 bg-gradient-to-r from-[#09030e] to-[#1a0a2d] p-3 sm:p-4 rounded-2xl border border-gray-600 shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50&h=50&fit=crop&crop=face" alt="Admin" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full ring-2 ring-[#9b51e0]">
+                        <div class="min-w-0">
+                            <h4 class="font-bold text-[#9b51e0] text-sm sm:text-base truncate">John Doe</h4>
+                            <p class="text-xs sm:text-sm text-gray-400 truncate">Computer Science • 4th Year</p>
+                            <a href="#" class="text-xs text-blue-400 hover:underline">LinkedIn</a>
+                        </div>
                     </div>
-                </div>
-                <div class="admin-card flex items-center space-x-4 bg-gradient-to-r from-[#09030e] to-[#1a0a2d] p-4 rounded-2xl border border-gray-600 shadow-lg">
-                    <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=50&h=50&fit=crop&crop=face" alt="Admin" class="w-12 h-12 rounded-full ring-2 ring-[#9b51e0]">
-                    <div>
-                        <h4 class="font-bold text-[#9b51e0]">Sarah Wilson</h4>
-                        <p class="text-sm text-gray-400">Data Science • 3rd Year</p>
-                        <a href="#" class="text-xs text-blue-400 hover:underline">LinkedIn</a>
+                    <div class="admin-card mobile-cart-card flex items-center space-x-3 sm:space-x-4 bg-gradient-to-r from-[#09030e] to-[#1a0a2d] p-3 sm:p-4 rounded-2xl border border-gray-600 shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=50&h=50&fit=crop&crop=face" alt="Admin" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full ring-2 ring-[#9b51e0]">
+                        <div class="min-w-0">
+                            <h4 class="font-bold text-[#9b51e0] text-sm sm:text-base truncate">Sarah Wilson</h4>
+                            <p class="text-xs sm:text-sm text-gray-400 truncate">Data Science • 3rd Year</p>
+                            <a href="#" class="text-xs text-blue-400 hover:underline">LinkedIn</a>
+                        </div>
                     </div>
-                </div>
-                <div class="admin-card flex items-center space-x-4 bg-gradient-to-r from-[#09030e] to-[#1a0a2d] p-4 rounded-2xl border border-gray-600 shadow-lg">
-                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=50&h=50&fit=crop&crop=face" alt="Admin" class="w-12 h-12 rounded-full ring-2 ring-[#9b51e0]">
-                    <div>
-                        <h4 class="font-bold text-[#9b51e0]">Mike Chen</h4>
-                        <p class="text-sm text-gray-400">AI/ML • 4th Year</p>
-                        <a href="#" class="text-xs text-blue-400 hover:underline">LinkedIn</a>
+                    <div class="admin-card mobile-cart-card flex items-center space-x-3 sm:space-x-4 bg-gradient-to-r from-[#09030e] to-[#1a0a2d] p-3 sm:p-4 rounded-2xl border border-gray-600 shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=50&h=50&fit=crop&crop=face" alt="Admin" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full ring-2 ring-[#9b51e0]">
+                        <div class="min-w-0">
+                            <h4 class="font-bold text-[#9b51e0] text-sm sm:text-base truncate">Mike Chen</h4>
+                            <p class="text-xs sm:text-sm text-gray-400 truncate">AI/ML • 4th Year</p>
+                            <a href="#" class="text-xs text-blue-400 hover:underline">LinkedIn</a>
+                        </div>
                     </div>
-                </div>
-                <div class="admin-card flex items-center space-x-4 bg-gradient-to-r from-[#09030e] to-[#1a0a2d] p-4 rounded-2xl border border-gray-600 shadow-lg">
-                    <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=50&h=50&fit=crop&crop=face" alt="Admin" class="w-12 h-12 rounded-full ring-2 ring-[#9b51e0]">
-                    <div>
-                        <h4 class="font-bold text-[#9b51e0]">Emma Davis</h4>
-                        <p class="text-sm text-gray-400">Software Engineering • 3rd Year</p>
-                        <a href="#" class="text-xs text-blue-400 hover:underline">LinkedIn</a>
+                    <div class="admin-card mobile-cart-card flex items-center space-x-3 sm:space-x-4 bg-gradient-to-r from-[#09030e] to-[#1a0a2d] p-3 sm:p-4 rounded-2xl border border-gray-600 shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=50&h=50&fit=crop&crop=face" alt="Admin" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full ring-2 ring-[#9b51e0]">
+                        <div class="min-w-0">
+                            <h4 class="font-bold text-[#9b51e0] text-sm sm:text-base truncate">Emma Davis</h4>
+                            <p class="text-xs sm:text-sm text-gray-400 truncate">Software Engineering • 3rd Year</p>
+                            <a href="#" class="text-xs text-blue-400 hover:underline">LinkedIn</a>
+                        </div>
                     </div>
-                </div>
-                <div class="admin-card flex items-center space-x-4 bg-gradient-to-r from-[#09030e] to-[#1a0a2d] p-4 rounded-2xl border border-gray-600 shadow-lg">
-                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=50&h=50&fit=crop&crop=face" alt="Admin" class="w-12 h-12 rounded-full ring-2 ring-[#9b51e0]">
-                    <div>
-                        <h4 class="font-bold text-[#9b51e0]">Alex Kumar</h4>
-                        <p class="text-sm text-gray-400">Cybersecurity • 4th Year</p>
-                        <a href="#" class="text-xs text-blue-400 hover:underline">LinkedIn</a>
+                    <div class="admin-card mobile-cart-card flex items-center space-x-3 sm:space-x-4 bg-gradient-to-r from-[#09030e] to-[#1a0a2d] p-3 sm:p-4 rounded-2xl border border-gray-600 shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=50&h=50&fit=crop&crop=face" alt="Admin" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full ring-2 ring-[#9b51e0]">
+                        <div class="min-w-0">
+                            <h4 class="font-bold text-[#9b51e0] text-sm sm:text-base truncate">Alex Kumar</h4>
+                            <p class="text-xs sm:text-sm text-gray-400 truncate">Cybersecurity • 4th Year</p>
+                            <a href="#" class="text-xs text-blue-400 hover:underline">LinkedIn</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -136,47 +221,49 @@
     </div>
 
     <!-- Student Cart -->
-    <div id="student-cart" class="hidden w-full h-32 bg-[#1d0a2d] border-t border-gray-700 z-30">
-        <div class="flex justify-center items-center h-full px-8">
-            <div class="flex space-x-8 items-center">
-                <div class="student-card flex items-center space-x-4 bg-gradient-to-r from-[#09030e] to-[#1a0a2d] p-4 rounded-2xl border border-gray-600 shadow-lg">
-                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=50&h=50&fit=crop&crop=face" alt="Student" class="w-12 h-12 rounded-full ring-2 ring-green-400">
-                    <div>
-                        <h4 class="font-bold text-green-400">Lisa Park</h4>
-                        <p class="text-sm text-gray-400">Computer Science • 2nd Year</p>
-                        <a href="#" class="text-xs text-blue-400 hover:underline">LinkedIn</a>
+    <div id="student-cart" class="hidden w-full h-24 sm:h-32 bg-[#1d0a2d] border-t border-gray-700 z-30">
+        <div class="flex justify-center items-center h-full px-4 sm:px-8">
+            <div class="mobile-cart-scroll w-full">
+                <div class="mobile-cart-container flex space-x-4 sm:space-x-8 items-center">
+                    <div class="student-card mobile-cart-card flex items-center space-x-3 sm:space-x-4 bg-gradient-to-r from-[#09030e] to-[#1a0a2d] p-3 sm:p-4 rounded-2xl border border-gray-600 shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=50&h=50&fit=crop&crop=face" alt="Student" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full ring-2 ring-green-400">
+                        <div class="min-w-0">
+                            <h4 class="font-bold text-green-400 text-sm sm:text-base truncate">Lisa Park</h4>
+                            <p class="text-xs sm:text-sm text-gray-400 truncate">Computer Science • 2nd Year</p>
+                            <a href="#" class="text-xs text-blue-400 hover:underline">LinkedIn</a>
+                        </div>
                     </div>
-                </div>
-                <div class="student-card flex items-center space-x-4 bg-gradient-to-r from-[#09030e] to-[#1a0a2d] p-4 rounded-2xl border border-gray-600 shadow-lg">
-                    <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=50&h=50&fit=crop&crop=face" alt="Student" class="w-12 h-12 rounded-full ring-2 ring-green-400">
-                    <div>
-                        <h4 class="font-bold text-green-400">David Kim</h4>
-                        <p class="text-sm text-gray-400">Data Science • 1st Year</p>
-                        <a href="#" class="text-xs text-blue-400 hover:underline">LinkedIn</a>
+                    <div class="student-card mobile-cart-card flex items-center space-x-3 sm:space-x-4 bg-gradient-to-r from-[#09030e] to-[#1a0a2d] p-3 sm:p-4 rounded-2xl border border-gray-600 shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=50&h=50&fit=crop&crop=face" alt="Student" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full ring-2 ring-green-400">
+                        <div class="min-w-0">
+                            <h4 class="font-bold text-green-400 text-sm sm:text-base truncate">David Kim</h4>
+                            <p class="text-xs sm:text-sm text-gray-400 truncate">Data Science • 1st Year</p>
+                            <a href="#" class="text-xs text-blue-400 hover:underline">LinkedIn</a>
+                        </div>
                     </div>
-                </div>
-                <div class="student-card flex items-center space-x-4 bg-gradient-to-r from-[#09030e] to-[#1a0a2d] p-4 rounded-2xl border border-gray-600 shadow-lg">
-                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=50&h=50&fit=crop&crop=face" alt="Student" class="w-12 h-12 rounded-full ring-2 ring-green-400">
-                    <div>
-                        <h4 class="font-bold text-green-400">Maria Garcia</h4>
-                        <p class="text-sm text-gray-400">Software Engineering • 2nd Year</p>
-                        <a href="#" class="text-xs text-blue-400 hover:underline">LinkedIn</a>
+                    <div class="student-card mobile-cart-card flex items-center space-x-3 sm:space-x-4 bg-gradient-to-r from-[#09030e] to-[#1a0a2d] p-3 sm:p-4 rounded-2xl border border-gray-600 shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=50&h=50&fit=crop&crop=face" alt="Student" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full ring-2 ring-green-400">
+                        <div class="min-w-0">
+                            <h4 class="font-bold text-green-400 text-sm sm:text-base truncate">Maria Garcia</h4>
+                            <p class="text-xs sm:text-sm text-gray-400 truncate">Software Engineering • 2nd Year</p>
+                            <a href="#" class="text-xs text-blue-400 hover:underline">LinkedIn</a>
+                        </div>
                     </div>
-                </div>
-                <div class="student-card flex items-center space-x-4 bg-gradient-to-r from-[#09030e] to-[#1a0a2d] p-4 rounded-2xl border border-gray-600 shadow-lg">
-                    <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=50&h=50&fit=crop&crop=face" alt="Student" class="w-12 h-12 rounded-full ring-2 ring-green-400">
-                    <div>
-                        <h4 class="font-bold text-green-400">James Wilson</h4>
-                        <p class="text-sm text-gray-400">AI/ML • 1st Year</p>
-                        <a href="#" class="text-xs text-blue-400 hover:underline">LinkedIn</a>
+                    <div class="student-card mobile-cart-card flex items-center space-x-3 sm:space-x-4 bg-gradient-to-r from-[#09030e] to-[#1a0a2d] p-3 sm:p-4 rounded-2xl border border-gray-600 shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=50&h=50&fit=crop&crop=face" alt="Student" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full ring-2 ring-green-400">
+                        <div class="min-w-0">
+                            <h4 class="font-bold text-green-400 text-sm sm:text-base truncate">James Wilson</h4>
+                            <p class="text-xs sm:text-sm text-gray-400 truncate">AI/ML • 1st Year</p>
+                            <a href="#" class="text-xs text-blue-400 hover:underline">LinkedIn</a>
+                        </div>
                     </div>
-                </div>
-                <div class="student-card flex items-center space-x-4 bg-gradient-to-r from-[#09030e] to-[#1a0a2d] p-4 rounded-2xl border border-gray-600 shadow-lg">
-                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50&h=50&fit=crop&crop=face" alt="Student" class="w-12 h-12 rounded-full ring-2 ring-green-400">
-                    <div>
-                        <h4 class="font-bold text-green-400">Sophie Chen</h4>
-                        <p class="text-sm text-gray-400">Cybersecurity • 2nd Year</p>
-                        <a href="#" class="text-xs text-blue-400 hover:underline">LinkedIn</a>
+                    <div class="student-card mobile-cart-card flex items-center space-x-3 sm:space-x-4 bg-gradient-to-r from-[#09030e] to-[#1a0a2d] p-3 sm:p-4 rounded-2xl border border-gray-600 shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50&h=50&fit=crop&crop=face" alt="Student" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full ring-2 ring-green-400">
+                        <div class="min-w-0">
+                            <h4 class="font-bold text-green-400 text-sm sm:text-base truncate">Sophie Chen</h4>
+                            <p class="text-xs sm:text-sm text-gray-400 truncate">Cybersecurity • 2nd Year</p>
+                            <a href="#" class="text-xs text-blue-400 hover:underline">LinkedIn</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -271,41 +358,41 @@
             adminCart.classList.add('hidden');
             studentCart.classList.add('hidden');
             mainContent.innerHTML = `
-                <div class="flex flex-col items-center justify-center min-h-screen">
-                    <div class="text-center mb-12">
-                        <h1 class="text-6xl font-extrabold text-[#9b51e0] mb-4">PW Student to Student</h1>
-                        <p class="text-xl text-gray-300">Connect, Learn, and Grow Together</p>
+                <div class="mobile-login-container flex flex-col items-center justify-center px-4">
+                    <div class="text-center mobile-login-spacing mb-6 sm:mb-8">
+                        <h1 class="mobile-title-large text-3xl sm:text-6xl font-extrabold text-[#9b51e0] mb-3 sm:mb-4">PW Student to Student</h1>
+                        <p class="text-base sm:text-xl text-gray-300">Connect, Learn, and Grow Together</p>
                     </div>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl">
+                    <div class="mobile-grid grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8 w-full max-w-4xl">
                         <!-- Student Login -->
-                        <div class="bg-[#1d0a2d] p-8 rounded-xl shadow-lg border border-gray-700">
-                            <div class="text-center mb-6">
-                                <div class="w-16 h-16 bg-[#9b51e0] rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="bg-[#1d0a2d] mobile-section-padding p-4 sm:p-8 rounded-xl shadow-lg border border-gray-700">
+                            <div class="text-center mb-4 sm:mb-6">
+                                <div class="w-10 h-10 sm:w-16 sm:h-16 bg-[#9b51e0] rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                                    <svg class="w-5 h-5 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                                     </svg>
                                 </div>
-                                <h2 class="text-2xl font-bold text-[#9b51e0]">Student Login</h2>
-                                <p class="text-gray-400 mt-2">Ask questions and get answers from seniors</p>
+                                <h2 class="text-lg sm:text-2xl font-bold text-[#9b51e0]">Student Login</h2>
+                                <p class="text-xs sm:text-base text-gray-400 mt-1 sm:mt-2">Ask questions and get answers from seniors</p>
                             </div>
-                            <button onclick="signInWithGoogle('student')" class="w-full bg-[#9b51e0] text-white font-bold py-3 rounded-lg shadow-md hover:bg-[#8545c2] transition-colors duration-300">
+                            <button onclick="signInWithGoogle('student')" class="w-full bg-[#9b51e0] text-white font-bold py-2 sm:py-3 rounded-lg shadow-md hover:bg-[#8545c2] transition-colors duration-300">
                                 Sign in with Google
                             </button>
                         </div>
 
                         <!-- Admin Login -->
-                        <div class="bg-[#1d0a2d] p-8 rounded-xl shadow-lg border border-gray-700">
-                            <div class="text-center mb-6">
-                                <div class="w-16 h-16 bg-[#9b51e0] rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="bg-[#1d0a2d] mobile-section-padding p-4 sm:p-8 rounded-xl shadow-lg border border-gray-700">
+                            <div class="text-center mb-4 sm:mb-6">
+                                <div class="w-10 h-10 sm:w-16 sm:h-16 bg-[#9b51e0] rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                                    <svg class="w-5 h-5 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
                                     </svg>
                                 </div>
-                                <h2 class="text-2xl font-bold text-[#9b51e0]">Admin Login</h2>
-                                <p class="text-gray-400 mt-2">Answer questions and mentor students</p>
+                                <h2 class="text-lg sm:text-2xl font-bold text-[#9b51e0]">Admin Login</h2>
+                                <p class="text-xs sm:text-base text-gray-400 mt-1 sm:mt-2">Answer questions and mentor students</p>
                             </div>
-                            <button onclick="signInWithGoogle('admin')" class="w-full bg-[#9b51e0] text-white font-bold py-3 rounded-lg shadow-md hover:bg-[#8545c2] transition-colors duration-300">
+                            <button onclick="signInWithGoogle('admin')" class="w-full bg-[#9b51e0] text-white font-bold py-2 sm:py-3 rounded-lg shadow-md hover:bg-[#8545c2] transition-colors duration-300">
                                 Sign in with Google
                             </button>
                         </div>
@@ -360,15 +447,15 @@
             }
 
             mainContent.innerHTML = `
-                <div class="flex flex-col items-center w-full space-y-12">
+                <div class="flex flex-col items-center w-full space-y-8 sm:space-y-12">
                     <!-- Announcements Section -->
-                    <div class="w-full max-w-4xl bg-[#1d0a2d] p-8 rounded-xl shadow-lg border border-gray-700">
-                        <div class="flex items-center justify-between mb-6">
+                    <div class="w-full max-w-4xl bg-[#1d0a2d] mobile-section-padding p-6 sm:p-8 rounded-xl shadow-lg border border-gray-700">
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
                             <div class="flex items-center space-x-2">
-                                <h3 class="text-2xl font-bold text-[#9b51e0]">📢 Announcements</h3>
+                                <h3 class="text-xl sm:text-2xl font-bold text-[#9b51e0]">📢 Announcements</h3>
                             </div>
                             ${userRole === 'admin' ? `
-                                <button onclick="showAnnouncementForm()" class="bg-[#9b51e0] text-white px-4 py-2 rounded-lg hover:bg-[#8545c2] transition-colors duration-300 font-medium">
+                                <button onclick="showAnnouncementForm()" class="bg-[#9b51e0] text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-[#8545c2] transition-colors duration-300 font-medium text-sm sm:text-base">
                                     + New Announcement
                                 </button>
                             ` : ''}
@@ -380,9 +467,9 @@
                     </div>
 
                     <!-- Ask a Question Section -->
-                    <div class="w-full max-w-2xl bg-[#1d0a2d] p-8 rounded-xl shadow-lg border border-gray-700">
+                    <div class="w-full max-w-2xl bg-[#1d0a2d] mobile-section-padding p-6 sm:p-8 rounded-xl shadow-lg border border-gray-700">
                         <div class="flex items-center space-x-2 mb-6">
-                            <h3 class="text-2xl font-bold text-[#9b51e0]">Ask a Question 🧑‍🎓</h3>
+                            <h3 class="text-xl sm:text-2xl font-bold text-[#9b51e0]">Ask a Question 🧑‍🎓</h3>
                         </div>
                         <p class="text-sm text-gray-400 mb-6">Got a question? Ask away and get answers from the community!</p>
                         <div id="question-form-container">
@@ -412,11 +499,11 @@
                                     ></textarea>
                                 </div>
                                 ${userRole === 'student' ? `
-                                    <div class="flex items-center space-x-2">
+                                    <div class="flex items-start space-x-2">
                                         <input
                                             type="checkbox"
                                             id="anonymous-checkbox"
-                                            class="w-4 h-4 text-[#9b51e0] bg-[#09030e] border-gray-600 rounded focus:ring-[#9b51e0] focus:ring-2"
+                                            class="w-4 h-4 text-[#9b51e0] bg-[#09030e] border-gray-600 rounded focus:ring-[#9b51e0] focus:ring-2 mt-0.5"
                                         />
                                         <label for="anonymous-checkbox" class="text-sm text-gray-300">
                                             Post anonymously (your name will be hidden from other students, but visible to admins)
@@ -425,7 +512,7 @@
                                 ` : ''}
                                 <button
                                     type="submit"
-                                    class="w-full bg-[#9b51e0] text-white font-bold py-3 rounded-lg shadow-md hover:bg-[#8545c2] transition-colors duration-300"
+                                    class="w-full bg-[#9b51e0] text-white font-bold py-2.5 sm:py-3 rounded-lg shadow-md hover:bg-[#8545c2] transition-colors duration-300"
                                 >
                                     Submit Question
                                 </button>
@@ -434,9 +521,9 @@
                     </div>
 
                     <!-- Questions Pool -->
-                    <div class="w-full max-w-4xl bg-[#1d0a2d] p-8 rounded-xl shadow-lg border border-gray-700">
+                    <div class="w-full max-w-4xl bg-[#1d0a2d] mobile-section-padding p-6 sm:p-8 rounded-xl shadow-lg border border-gray-700">
                         <div class="flex items-center space-x-2 mb-6">
-                            <h3 class="text-2xl font-bold">Questions Pool 📝</h3>
+                            <h3 class="text-xl sm:text-2xl font-bold">Questions Pool 📝</h3>
                         </div>
                         <p class="text-sm text-gray-400 mb-6">Browse and vote on questions from the community.</p>
                         <div id="questions-container" class="space-y-6">
@@ -567,53 +654,53 @@
             const voteDisabled = isAuthor ? 'opacity-50 cursor-not-allowed' : '';
             
             card.innerHTML = `
-                <div class="flex justify-between items-start mb-4">
+                <div class="mobile-question-layout flex justify-between items-start mb-4">
                     <div class="flex-1">
-                        <div class="flex items-center justify-between mb-2">
-                            <h4 class="font-bold text-lg text-white">${data.title}</h4>
-                            <div class="flex items-center space-x-2">
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2 gap-2">
+                            <h4 class="font-bold text-base sm:text-lg text-white">${data.title}</h4>
+                            <div class="mobile-edit-buttons flex items-center space-x-2">
                                 ${isAuthor && isPending ? `
-                                    <button onclick="editQuestion('${id}')" class="text-blue-400 hover:text-blue-300 text-sm bg-blue-900/20 px-2 py-1 rounded-md transition-colors duration-200">
+                                    <button onclick="editQuestion('${id}')" class="text-blue-400 hover:text-blue-300 text-xs sm:text-sm bg-blue-900/20 px-2 py-1 rounded-md transition-colors duration-200">
                                         ✏️ Edit
                                     </button>
                                 ` : ''}
                                 ${isAdmin ? `
-                                    <button onclick="deleteQuestion('${id}')" class="text-red-400 hover:text-red-300 text-sm bg-red-900/20 px-2 py-1 rounded-md transition-colors duration-200">
+                                    <button onclick="deleteQuestion('${id}')" class="text-red-400 hover:text-red-300 text-xs sm:text-sm bg-red-900/20 px-2 py-1 rounded-md transition-colors duration-200">
                                         🗑️ Delete
                                     </button>
                                 ` : ''}
                             </div>
                         </div>
-                        <p class="text-gray-300 mb-3">${data.details}</p>
-                        <div class="flex items-center text-sm text-gray-400">
+                        <p class="text-gray-300 mb-3 text-sm sm:text-base">${data.details}</p>
+                        <div class="flex flex-wrap items-center text-xs sm:text-sm text-gray-400 gap-1 sm:gap-0">
                             <span>Asked by: ${displayName}</span>
-                            <span class="mx-2">•</span>
+                            <span class="hidden sm:inline mx-2">•</span>
                             <span>${data.createdAt ? new Date(data.createdAt.toDate()).toLocaleDateString() : 'Just now'}</span>
-                            ${isAuthor ? '<span class="mx-2">•</span><span class="text-blue-400">Your question</span>' : ''}
-                            ${isPending ? '<span class="mx-2">•</span><span class="text-yellow-400">Pending</span>' : ''}
-                            ${isAdmin && data.isAnonymous ? '<span class="mx-2">•</span><span class="text-orange-400">Anonymous</span>' : ''}
+                            ${isAuthor ? '<span class="hidden sm:inline mx-2">•</span><span class="text-blue-400">Your question</span>' : ''}
+                            ${isPending ? '<span class="hidden sm:inline mx-2">•</span><span class="text-yellow-400">Pending</span>' : ''}
+                            ${isAdmin && data.isAnonymous ? '<span class="hidden sm:inline mx-2">•</span><span class="text-orange-400">Anonymous</span>' : ''}
                         </div>
                     </div>
-                    <div class="flex flex-col items-center ml-4" data-id="${id}">
-                        <button class="vote-btn upvote-btn ${upvoteClass} text-xl mb-1 ${voteDisabled} cursor-pointer" ${isAuthor ? 'disabled' : ''}>▲</button>
-                        <span class="vote-count font-bold text-white" id="vote-count-${id}">${data.votes || 0}</span>
-                        <button class="vote-btn downvote-btn ${downvoteClass} text-xl mt-1 ${voteDisabled} cursor-pointer" ${isAuthor ? 'disabled' : ''}>▼</button>
+                    <div class="mobile-vote-section flex flex-col items-center ml-4" data-id="${id}">
+                        <button class="vote-btn upvote-btn ${upvoteClass} text-lg sm:text-xl mb-1 ${voteDisabled} cursor-pointer" ${isAuthor ? 'disabled' : ''}>▲</button>
+                        <span class="vote-count font-bold text-white text-sm sm:text-base" id="vote-count-${id}">${data.votes || 0}</span>
+                        <button class="vote-btn downvote-btn ${downvoteClass} text-lg sm:text-xl mt-1 ${voteDisabled} cursor-pointer" ${isAuthor ? 'disabled' : ''}>▼</button>
                     </div>
                 </div>
                 
                 ${hasAnswer ? `
-                    <div class="mt-4 p-4 bg-gradient-to-r from-[#1d0a2d] to-[#2a0a3d] rounded-xl border border-gray-600 shadow-lg">
+                    <div class="mobile-answer-section mt-4 p-4 bg-gradient-to-r from-[#1d0a2d] to-[#2a0a3d] rounded-xl border border-gray-600 shadow-lg">
                         <div class="flex items-center mb-3">
                             <div class="w-8 h-8 bg-[#9b51e0] rounded-full flex items-center justify-center mr-3">
                                 <span class="text-white text-sm font-bold">A</span>
                             </div>
-                            <h5 class="font-bold text-[#9b51e0]">Answer from ${data.answers[0].authorName}</h5>
+                            <h5 class="font-bold text-[#9b51e0] text-sm sm:text-base">Answer from ${data.answers[0].authorName}</h5>
                         </div>
-                        <p class="text-gray-300 leading-relaxed">${data.answers[0].text}</p>
-                        <div class="flex items-center justify-between mt-3 pt-3 border-t border-gray-600">
+                        <p class="text-gray-300 leading-relaxed text-sm sm:text-base">${data.answers[0].text}</p>
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-3 pt-3 border-t border-gray-600 gap-2">
                             <span class="text-xs text-gray-400">Answered on ${data.answers[0].createdAt ? new Date(data.answers[0].createdAt).toLocaleDateString() : 'Just now'}</span>
                             ${isAdmin ? `
-                                <button onclick="deleteAnswer('${id}')" class="text-red-400 hover:text-red-300 text-xs bg-red-900/20 px-2 py-1 rounded transition-colors duration-200">
+                                <button onclick="deleteAnswer('${id}')" class="text-red-400 hover:text-red-300 text-xs bg-red-900/20 px-2 py-1 rounded transition-colors duration-200 self-start sm:self-auto">
                                     Delete Answer
                                 </button>
                             ` : ''}
@@ -622,11 +709,11 @@
                 ` : ''}
                 
                 ${isAdmin && !hasAnswer ? `
-                    <div class="mt-4 p-4 bg-gradient-to-r from-[#1a0a2d] to-[#2a0a3d] rounded-xl border border-gray-600">
-                        <h5 class="font-bold text-[#9b51e0] mb-3">Write an Answer</h5>
-                        <textarea id="answer-${id}" rows="4" placeholder="Provide a helpful and detailed answer..." class="w-full px-4 py-3 bg-[#09030e] border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9b51e0] transition-all text-gray-300"></textarea>
+                    <div class="mobile-answer-section mt-4 p-4 bg-gradient-to-r from-[#1a0a2d] to-[#2a0a3d] rounded-xl border border-gray-600">
+                        <h5 class="font-bold text-[#9b51e0] mb-3 text-sm sm:text-base">Write an Answer</h5>
+                        <textarea id="answer-${id}" rows="4" placeholder="Provide a helpful and detailed answer..." class="w-full px-4 py-3 bg-[#09030e] border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9b51e0] transition-all text-gray-300 text-sm sm:text-base"></textarea>
                         <div class="flex justify-end mt-3">
-                            <button onclick="submitAnswer('${id}')" class="bg-[#9b51e0] text-white px-6 py-2 rounded-lg hover:bg-[#8545c2] transition-colors duration-300 font-medium">
+                            <button onclick="submitAnswer('${id}')" class="bg-[#9b51e0] text-white px-4 sm:px-6 py-2 rounded-lg hover:bg-[#8545c2] transition-colors duration-300 font-medium text-sm sm:text-base">
                                 Submit Answer
                             </button>
                         </div>
@@ -914,7 +1001,7 @@
                 // Show edit form
                 const editFormHTML = `
                     <div class="mt-4 p-4 bg-gradient-to-r from-[#1a0a2d] to-[#2a0a3d] rounded-xl border border-gray-600">
-                        <h5 class="font-bold text-[#9b51e0] mb-3">Edit Your Question</h5>
+                        <h5 class="font-bold text-[#9b51e0] mb-3 text-sm sm:text-base">Edit Your Question</h5>
                         <form id="edit-question-form-${questionId}" class="space-y-4">
                             <div>
                                 <label for="edit-title-${questionId}" class="block text-left text-sm font-medium text-gray-300 mb-1">
@@ -939,17 +1026,17 @@
                                     class="w-full px-4 py-3 bg-[#09030e] border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9b51e0] transition-all text-gray-300"
                                 >${questionData.details}</textarea>
                             </div>
-                            <div class="flex space-x-3">
+                            <div class="mobile-edit-buttons flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
                                 <button
                                     type="submit"
-                                    class="bg-[#9b51e0] text-white px-6 py-2 rounded-lg hover:bg-[#8545c2] transition-colors duration-300 font-medium"
+                                    class="bg-[#9b51e0] text-white px-4 sm:px-6 py-2 rounded-lg hover:bg-[#8545c2] transition-colors duration-300 font-medium text-sm sm:text-base"
                                 >
                                     Update Question
                                 </button>
                                 <button
                                     type="button"
                                     onclick="cancelEdit('${questionId}')"
-                                    class="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition-colors duration-300 font-medium"
+                                    class="bg-gray-600 text-white px-4 sm:px-6 py-2 rounded-lg hover:bg-gray-700 transition-colors duration-300 font-medium text-sm sm:text-base"
                                 >
                                     Cancel
                                 </button>
@@ -1089,25 +1176,25 @@
         // Create announcement card
         function createAnnouncementCard(id, data) {
             const card = document.createElement('div');
-            card.className = 'bg-[#09030e] p-6 rounded-lg border border-gray-600';
+            card.className = 'bg-[#09030e] p-4 sm:p-6 rounded-lg border border-gray-600';
             
             const isAdmin = userRole === 'admin';
             
             card.innerHTML = `
                 <div class="flex justify-between items-start mb-4">
                     <div class="flex-1">
-                        <div class="flex items-center justify-between mb-2">
-                            <h4 class="font-bold text-lg text-white">${data.title}</h4>
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2 gap-2">
+                            <h4 class="font-bold text-base sm:text-lg text-white">${data.title}</h4>
                             ${isAdmin ? `
-                                <button onclick="deleteAnnouncement('${id}')" class="text-red-400 hover:text-red-300 text-sm bg-red-900/20 px-2 py-1 rounded-md transition-colors duration-200">
+                                <button onclick="deleteAnnouncement('${id}')" class="text-red-400 hover:text-red-300 text-xs sm:text-sm bg-red-900/20 px-2 py-1 rounded-md transition-colors duration-200 self-start sm:self-auto">
                                     🗑️ Delete
                                 </button>
                             ` : ''}
                         </div>
-                        <p class="text-gray-300 mb-3">${data.content}</p>
-                        <div class="flex items-center text-sm text-gray-400">
+                        <p class="text-gray-300 mb-3 text-sm sm:text-base">${data.content}</p>
+                        <div class="flex flex-wrap items-center text-xs sm:text-sm text-gray-400 gap-1 sm:gap-0">
                             <span>Posted by: ${data.authorName}</span>
-                            <span class="mx-2">•</span>
+                            <span class="hidden sm:inline mx-2">•</span>
                             <span>${data.createdAt ? new Date(data.createdAt.toDate()).toLocaleDateString() : 'Just now'}</span>
                         </div>
                     </div>
@@ -1126,8 +1213,8 @@
 
             const container = document.getElementById('announcements-container');
             const formHTML = `
-                <div class="bg-[#09030e] p-6 rounded-lg border border-gray-600">
-                    <h5 class="font-bold text-[#9b51e0] mb-4">Create New Announcement</h5>
+                <div class="bg-[#09030e] p-4 sm:p-6 rounded-lg border border-gray-600">
+                    <h5 class="font-bold text-[#9b51e0] mb-4 text-sm sm:text-base">Create New Announcement</h5>
                     <form id="announcement-form" class="space-y-4">
                         <div>
                             <label for="announcement-title" class="block text-left text-sm font-medium text-gray-300 mb-1">
@@ -1153,17 +1240,17 @@
                                 class="w-full px-4 py-3 bg-[#1d0a2d] border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9b51e0] transition-all"
                             ></textarea>
                         </div>
-                        <div class="flex space-x-3">
+                        <div class="mobile-edit-buttons flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
                             <button
                                 type="submit"
-                                class="bg-[#9b51e0] text-white px-6 py-2 rounded-lg hover:bg-[#8545c2] transition-colors duration-300 font-medium"
+                                class="bg-[#9b51e0] text-white px-4 sm:px-6 py-2 rounded-lg hover:bg-[#8545c2] transition-colors duration-300 font-medium text-sm sm:text-base"
                             >
                                 Post Announcement
                             </button>
                             <button
                                 type="button"
                                 onclick="cancelAnnouncementForm()"
-                                class="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition-colors duration-300 font-medium"
+                                class="bg-gray-600 text-white px-4 sm:px-6 py-2 rounded-lg hover:bg-gray-700 transition-colors duration-300 font-medium text-sm sm:text-base"
                             >
                                 Cancel
                             </button>
@@ -1266,27 +1353,27 @@
                 if (!pendingQuestions.empty) {
                     const pendingQuestion = pendingQuestions.docs[0].data();
                     questionFormContainer.innerHTML = `
-                        <div class="bg-gradient-to-r from-yellow-900/20 to-orange-900/20 p-6 rounded-xl border border-yellow-600">
+                        <div class="bg-gradient-to-r from-yellow-900/20 to-orange-900/20 p-4 sm:p-6 rounded-xl border border-yellow-600">
                             <div class="flex items-center mb-4">
                                 <div class="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center mr-3">
                                     <span class="text-white text-sm font-bold">⏳</span>
                                 </div>
-                                <h4 class="font-bold text-yellow-400">You have a pending question</h4>
+                                <h4 class="font-bold text-yellow-400 text-sm sm:text-base">You have a pending question</h4>
                             </div>
-                            <p class="text-gray-300 mb-3">You already have a question waiting for an answer. You can edit your question or wait for an admin to respond.</p>
+                            <p class="text-gray-300 mb-3 text-sm sm:text-base">You already have a question waiting for an answer. You can edit your question or wait for an admin to respond.</p>
                             <div class="bg-[#09030e] p-4 rounded-lg border border-gray-600">
-                                <h5 class="font-bold text-white mb-2">${pendingQuestion.title}</h5>
+                                <h5 class="font-bold text-white mb-2 text-sm sm:text-base">${pendingQuestion.title}</h5>
                                 <p class="text-gray-300 text-sm">${pendingQuestion.details}</p>
-                                <div class="flex items-center mt-3 text-xs text-gray-400">
+                                <div class="flex flex-wrap items-center mt-3 text-xs text-gray-400 gap-1 sm:gap-0">
                                     <span>Posted: ${pendingQuestion.createdAt ? new Date(pendingQuestion.createdAt.toDate()).toLocaleDateString() : 'Just now'}</span>
-                                    ${pendingQuestion.isAnonymous ? '<span class="mx-2">•</span><span class="text-orange-400">Anonymous</span>' : ''}
+                                    ${pendingQuestion.isAnonymous ? '<span class="hidden sm:inline mx-2">•</span><span class="text-orange-400">Anonymous</span>' : ''}
                                 </div>
                             </div>
-                            <div class="mt-4 flex space-x-3">
-                                <button onclick="editQuestion('${pendingQuestions.docs[0].id}')" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-300 font-medium">
+                            <div class="mt-4 mobile-edit-buttons flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
+                                <button onclick="editQuestion('${pendingQuestions.docs[0].id}')" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-300 font-medium text-sm sm:text-base">
                                     Edit Question
                                 </button>
-                                <button onclick="deleteQuestion('${pendingQuestions.docs[0].id}')" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors duration-300 font-medium">
+                                <button onclick="deleteQuestion('${pendingQuestions.docs[0].id}')" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors duration-300 font-medium text-sm sm:text-base">
                                     Delete Question
                                 </button>
                             </div>
@@ -1304,10 +1391,10 @@
         document.addEventListener('DOMContentLoaded', () => {
             // Show loading state first
             mainContent.innerHTML = `
-                <div class="flex flex-col items-center justify-center min-h-screen">
+                <div class="flex flex-col items-center justify-center min-h-screen px-4">
                     <div class="text-center">
-                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[#9b51e0] mx-auto mb-4"></div>
-                        <p class="text-gray-300">Loading...</p>
+                        <div class="animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 border-b-2 border-[#9b51e0] mx-auto mb-4"></div>
+                        <p class="text-gray-300 text-sm sm:text-base">Loading...</p>
                     </div>
                 </div>
             `;
