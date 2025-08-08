@@ -205,16 +205,9 @@
             // Enable offline persistence for better reliability
             db.enablePersistence()
                 .catch((err) => {
-                    if (err.code == 'failed-precondition') {
-                        console.log('Multiple tabs open, persistence can only be enabled in one tab at a time.');
-                    } else if (err.code == 'unimplemented') {
-                        console.log('The current browser does not support persistence.');
-                    }
+                    // Silent error handling for persistence
                 });
-                
-            console.log('✅ Firebase initialized successfully');
         } catch (error) {
-            console.error('Firebase initialization error:', error);
             alert('Application initialization failed. Please try again later.');
         }
 
@@ -267,7 +260,6 @@
                     showDashboard();
                 }
             } catch (error) {
-                console.error('Error checking user role:', error);
                 userRole = 'student';
                 showDashboard();
             }
@@ -342,8 +334,6 @@
                 userRole = role;
                 showDashboard();
             } catch (error) {
-                console.error('Sign in error:', error);
-                
                 // More specific error messages
                 if (error.code === 'auth/popup-blocked') {
                     alert('Sign in popup was blocked. Please allow popups for this site and try again.');
@@ -523,7 +513,6 @@
                 lastQuestionSubmitTime = Date.now();
                 alert('Question submitted successfully! You can now edit your question or wait for an answer.');
             } catch (error) {
-                console.error('Error submitting question:', error);
                 alert('Failed to submit question. Please try again.');
             }
         }
@@ -569,7 +558,7 @@
                         userVote = userVoteDoc.data().vote;
                     }
                 } catch (error) {
-                    console.error('Error getting user vote:', error);
+                    // Silent error handling
                 }
             }
             
@@ -650,37 +639,21 @@
                 const upvoteBtn = card.querySelector('.upvote-btn');
                 const downvoteBtn = card.querySelector('.downvote-btn');
                 
-                console.log('Setting up vote listeners for question', id, { upvoteBtn: !!upvoteBtn, downvoteBtn: !!downvoteBtn });
-                console.log('Card HTML structure:', card.innerHTML);
-                console.log('All buttons in card:', card.querySelectorAll('button'));
-                console.log('All upvote buttons in card:', card.querySelectorAll('.upvote-btn'));
-                console.log('All downvote buttons in card:', card.querySelectorAll('.downvote-btn'));
-                
                 if (upvoteBtn) {
                     upvoteBtn.addEventListener('click', (e) => {
-                        console.log('Upvote button clicked for question', id);
                         e.preventDefault();
                         e.stopPropagation();
                         handleVote(id, 1);
                     });
-                    console.log('✅ Upvote listener attached for question', id);
-                } else {
-                    console.log('❌ Upvote button not found for question', id);
                 }
                 
                 if (downvoteBtn) {
                     downvoteBtn.addEventListener('click', (e) => {
-                        console.log('Downvote button clicked for question', id);
                         e.preventDefault();
                         e.stopPropagation();
                         handleVote(id, -1);
                     });
-                    console.log('✅ Downvote listener attached for question', id);
-                } else {
-                    console.log('❌ Downvote button not found for question', id);
                 }
-            } else {
-                console.log('Skipping vote listeners for question', id, '- user is author');
             }
 
             return card;
@@ -688,82 +661,63 @@
 
         // Handle voting
         async function handleVote(questionId, voteChange) {
-            console.log('=== VOTE OPERATION START ===');
-            console.log('handleVote called with:', { questionId, voteChange, currentUser: currentUser?.uid });
-            
             if (!currentUser) {
-                console.log('❌ No current user - cannot vote');
                 alert('Please log in to vote.');
                 return;
             }
 
             if (!db) {
-                console.log('❌ Firebase database not available');
                 alert('Database connection error. Please refresh the page.');
                 return;
             }
 
             try {
-                console.log('🔍 Step 1: Checking if user is voting on their own question...');
                 // Check if user is voting on their own question
                 const questionDoc = await db.collection('questions').doc(questionId).get();
                 
                 if (!questionDoc.exists) {
-                    console.log('❌ Question not found in database');
                     alert('Question not found. Please refresh the page.');
                     return;
                 }
                 
                 const questionData = questionDoc.data();
-                console.log('Question data:', questionData);
                 
                 if (questionData.authorId === currentUser.uid) {
-                    console.log('❌ User trying to vote on their own question');
                     alert('You cannot vote on your own question.');
                     return;
                 }
 
-                console.log('🔍 Step 2: Checking existing vote...');
                 // Check if user has already voted on this question
                 const userVoteDocRef = db.collection('userVotes').doc(`${currentUser.uid}_${questionId}`);
                 const userVoteDoc = await userVoteDocRef.get();
-                console.log('User vote doc exists:', userVoteDoc.exists);
                 
                 if (userVoteDoc.exists) {
                     const existingVote = userVoteDoc.data().vote;
-                    console.log('Existing vote:', existingVote);
                     
                     // If user is trying to vote the same way again, remove the vote
                     if (existingVote === voteChange) {
-                        console.log('🔄 Removing vote...');
                         // Remove the vote
                         await userVoteDocRef.delete();
-                        console.log('✅ User vote deleted');
                         
                         await db.collection('questions').doc(questionId).update({
                             votes: firebase.firestore.FieldValue.increment(-voteChange)
                         });
-                        console.log('✅ Question votes decremented');
                         
                         updateVoteDisplay(questionId, 0);
                     } else {
-                        console.log('🔄 Changing vote...');
                         // User is changing their vote
                         await userVoteDocRef.update({
                             vote: voteChange,
                             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                         });
-                        console.log('✅ User vote updated');
                         
                         await db.collection('questions').doc(questionId).update({
                             votes: firebase.firestore.FieldValue.increment(voteChange - existingVote)
                         });
-                        console.log('✅ Question votes updated');
                         
                         updateVoteDisplay(questionId, voteChange);
                     }
                 } else {
-                    console.log('🆕 First time voting...');
                     // First time voting on this question
                     const voteData = {
                         userId: currentUser.uid,
@@ -772,33 +726,16 @@
                         createdAt: firebase.firestore.FieldValue.serverTimestamp()
                     };
                     
-                    console.log('Creating vote document with data:', voteData);
                     await userVoteDocRef.set(voteData);
-                    console.log('✅ User vote created');
                     
-                    console.log('Updating question votes in database...');
                     await db.collection('questions').doc(questionId).update({
                         votes: firebase.firestore.FieldValue.increment(voteChange)
                     });
-                    console.log('✅ Question votes updated successfully');
                     
-                    console.log('Calling updateVoteDisplay...');
                     updateVoteDisplay(questionId, voteChange);
                 }
-                console.log('✅ Vote operation completed successfully');
-                
-                // Show success feedback
-                const voteText = voteChange === 1 ? 'upvoted' : 'downvoted';
-                console.log(`Successfully ${voteText} question ${questionId}`);
                 
             } catch (error) {
-                console.error('❌ Error voting:', error);
-                console.error('Error details:', {
-                    code: error.code,
-                    message: error.message,
-                    stack: error.stack
-                });
-                
                 // Provide more specific error messages
                 if (error.code === 'permission-denied') {
                     alert('Permission denied. You may not have the right to vote on this question.');
@@ -812,23 +749,15 @@
 
         // Update vote display after voting
         function updateVoteDisplay(questionId, userVote) {
-            console.log('=== UPDATE VOTE DISPLAY ===');
-            console.log('updateVoteDisplay called with:', { questionId, userVote });
-            
             // Find the question card first, then find buttons within it
             const dataIdElement = document.querySelector(`[data-id="${questionId}"]`);
-            console.log('Data ID element found:', !!dataIdElement);
             
             if (!dataIdElement) {
-                console.log('❌ Data ID element not found for question ID:', questionId);
-                console.log('All data-id elements:', document.querySelectorAll('[data-id]'));
                 return;
             }
             
             const questionCard = dataIdElement.closest('.question-card');
             if (!questionCard) {
-                console.log('❌ Question card not found for ID:', questionId);
-                console.log('All question cards:', document.querySelectorAll('.question-card'));
                 return;
             }
             
@@ -836,10 +765,7 @@
             const downvoteBtn = questionCard.querySelector('.downvote-btn');
             const voteCountSpan = questionCard.querySelector(`#vote-count-${questionId}`);
             
-            console.log('Found elements:', { upvoteBtn: !!upvoteBtn, downvoteBtn: !!downvoteBtn, voteCountSpan: !!voteCountSpan });
-            
             if (upvoteBtn && downvoteBtn) {
-                console.log('Updating button styles...');
                 // Reset classes first
                 upvoteBtn.className = upvoteBtn.className.replace(/text-green-[34]00/g, 'text-green-400');
                 downvoteBtn.className = downvoteBtn.className.replace(/text-red-[34]00/g, 'text-red-400');
@@ -847,37 +773,23 @@
                 // Update button colors based on user's vote
                 if (userVote === 1) {
                     upvoteBtn.className = upvoteBtn.className.replace('text-green-400', 'text-green-300');
-                    console.log('✅ Upvote button highlighted');
                 } else if (userVote === -1) {
                     downvoteBtn.className = downvoteBtn.className.replace('text-red-400', 'text-red-300');
-                    console.log('✅ Downvote button highlighted');
-                } else {
-                    console.log('✅ Vote buttons reset to default');
                 }
-            } else {
-                console.log('❌ Vote buttons not found');
             }
             
             // Update vote count if available
             if (voteCountSpan) {
-                console.log('Updating vote count from database...');
                 // Get the current vote count from the database
                 db.collection('questions').doc(questionId).get().then(doc => {
                     if (doc.exists) {
                         const votes = doc.data().votes || 0;
                         voteCountSpan.textContent = votes;
-                        console.log('✅ Updated vote count to:', votes);
-                    } else {
-                        console.log('❌ Question document not found in database');
                     }
                 }).catch(error => {
-                    console.error('❌ Error updating vote count:', error);
+                    // Silent error handling
                 });
-            } else {
-                console.log('❌ Vote count span not found');
             }
-            
-            console.log('=== UPDATE VOTE DISPLAY COMPLETE ===');
         }
 
         // Submit answer (admin only)
@@ -916,7 +828,26 @@
                 document.getElementById(`answer-${questionId}`).value = '';
                 alert('Answer submitted successfully! The question is now marked as answered.');
             } catch (error) {
-                console.error('Error submitting answer:', error);
+                // Check if the operation might have succeeded despite the error
+                // This can happen with network issues or Firebase offline persistence
+                try {
+                    const questionDoc = await db.collection('questions').doc(questionId).get();
+                    const questionData = questionDoc.data();
+                    
+                    // Check if our answer was actually saved
+                    const hasOurAnswer = questionData.answers && questionData.answers.some(ans => 
+                        ans.authorId === currentUser.uid && ans.text === answerText
+                    );
+                    
+                    if (hasOurAnswer) {
+                        document.getElementById(`answer-${questionId}`).value = '';
+                        alert('Answer submitted successfully! The question is now marked as answered.');
+                        return;
+                    }
+                } catch (verifyError) {
+                    // If verification also fails, show the original error
+                }
+                
                 alert('Failed to submit answer. Please try again.');
             }
         }
@@ -955,7 +886,6 @@
                 
                 alert('Question deleted successfully!');
             } catch (error) {
-                console.error('Error deleting question:', error);
                 alert('Failed to delete question. Please try again.');
             }
         }
@@ -1044,7 +974,6 @@
                 document.getElementById(`edit-question-form-${questionId}`).addEventListener('submit', (e) => handleEditSubmit(e, questionId));
                 
             } catch (error) {
-                console.error('Error editing question:', error);
                 alert('Failed to load question for editing. Please try again.');
             }
         }
@@ -1080,7 +1009,6 @@
                 
                 alert('Question updated successfully!');
             } catch (error) {
-                console.error('Error updating question:', error);
                 alert('Failed to update question. Please try again.');
             }
         }
@@ -1121,7 +1049,6 @@
                     alert('Answer deleted successfully!');
                 }
             } catch (error) {
-                console.error('Error deleting answer:', error);
                 alert('Failed to delete answer. Please try again.');
             }
         }
@@ -1131,7 +1058,7 @@
             try {
                 await auth.signOut();
             } catch (error) {
-                console.error('Logout error:', error);
+                // Silent error handling
             }
         });
 
@@ -1299,7 +1226,6 @@
                 cancelAnnouncementForm();
                 alert('Announcement posted successfully!');
             } catch (error) {
-                console.error('Error posting announcement:', error);
                 alert('Failed to post announcement. Please try again.');
             }
         }
@@ -1319,7 +1245,6 @@
                 await db.collection('announcements').doc(announcementId).delete();
                 alert('Announcement deleted successfully!');
             } catch (error) {
-                console.error('Error deleting announcement:', error);
                 alert('Failed to delete announcement. Please try again.');
             }
         }
@@ -1369,265 +1294,11 @@
                     `;
                 }
             } catch (error) {
-                console.error('Error checking pending questions:', error);
+                // Silent error handling
             }
         }
 
-        // Test voting system
-        async function testVotingSystem() {
-            console.log('=== VOTING SYSTEM TEST ===');
-            console.log('Current user:', currentUser);
-            console.log('User role:', userRole);
-            console.log('Firebase auth available:', !!auth);
-            console.log('Firebase db available:', !!db);
-            
-            if (!currentUser) {
-                console.log('❌ No current user - cannot test voting');
-                alert('Please log in first to test the voting system.');
-                return;
-            }
-            
-            if (!db) {
-                console.log('❌ Firebase database not available');
-                alert('Database connection error. Please refresh the page.');
-                return;
-            }
-            
-            try {
-                // Test database connection
-                console.log('Testing database connection...');
-                const testDoc = await db.collection('test').doc('connection').get();
-                console.log('✅ Database connection successful');
-                
-                // Test if questions collection exists and has data
-                console.log('Testing questions collection...');
-                const questionsSnapshot = await db.collection('questions').limit(1).get();
-                console.log('✅ Questions collection accessible, count:', questionsSnapshot.size);
-                
-                if (questionsSnapshot.size > 0) {
-                    const firstQuestion = questionsSnapshot.docs[0];
-                    console.log('First question ID:', firstQuestion.id);
-                    console.log('First question data:', firstQuestion.data());
-                    
-                    // Test if we can read the question
-                    const questionData = firstQuestion.data();
-                    console.log('Question author ID:', questionData.authorId);
-                    console.log('Current user ID:', currentUser.uid);
-                    console.log('Can user vote on this question:', questionData.authorId !== currentUser.uid);
-                } else {
-                    console.log('⚠️ No questions found in database');
-                }
-                
-                // Test userVotes collection
-                console.log('Testing userVotes collection...');
-                const userVotesSnapshot = await db.collection('userVotes').limit(1).get();
-                console.log('✅ UserVotes collection accessible, count:', userVotesSnapshot.size);
-                
-                // Test write permissions by trying to create a test document
-                console.log('Testing write permissions...');
-                const testVoteRef = db.collection('userVotes').doc(`test_${Date.now()}`);
-                await testVoteRef.set({
-                    userId: currentUser.uid,
-                    questionId: 'test',
-                    vote: 1,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    isTest: true
-                });
-                console.log('✅ Write permission test successful');
-                
-                // Clean up test document
-                await testVoteRef.delete();
-                console.log('✅ Test document cleaned up');
-                
-                // Test question update permissions
-                if (questionsSnapshot.size > 0) {
-                    const firstQuestionId = questionsSnapshot.docs[0].id;
-                    console.log('Testing question update permissions...');
-                    const questionRef = db.collection('questions').doc(firstQuestionId);
-                    const currentData = (await questionRef.get()).data();
-                    const currentVotes = currentData.votes || 0;
-                    
-                    // Try to increment votes
-                    await questionRef.update({
-                        votes: firebase.firestore.FieldValue.increment(1)
-                    });
-                    console.log('✅ Question update permission test successful');
-                    
-                    // Restore original vote count
-                    await questionRef.update({
-                        votes: currentVotes
-                    });
-                    console.log('✅ Vote count restored');
-                }
-                
-                console.log('🎉 All voting system tests passed!');
-                alert('Voting system test completed successfully! Check console for details.');
-                
-            } catch (error) {
-                console.error('❌ Test failed:', error);
-                console.error('Error details:', {
-                    code: error.code,
-                    message: error.message,
-                    stack: error.stack
-                });
-                
-                if (error.code === 'permission-denied') {
-                    alert('❌ Permission denied. Check Firebase security rules.');
-                } else if (error.code === 'unavailable') {
-                    alert('❌ Database unavailable. Check your internet connection.');
-                } else {
-                    alert(`❌ Test failed: ${error.message}`);
-                }
-            }
-        }
 
-        // Add test button to the page
-        function addTestButton() {
-            const testBtn = document.createElement('button');
-            testBtn.textContent = 'Test Voting System';
-            testBtn.className = 'fixed top-20 right-4 bg-red-600 text-white px-4 py-2 rounded z-50';
-            testBtn.onclick = testVotingSystem;
-            document.body.appendChild(testBtn);
-            
-            // Add a second button for quick vote test
-            const quickTestBtn = document.createElement('button');
-            quickTestBtn.textContent = 'Quick Vote Test';
-            quickTestBtn.className = 'fixed top-20 right-48 bg-blue-600 text-white px-4 py-2 rounded z-50';
-            quickTestBtn.onclick = quickVoteTest;
-            document.body.appendChild(quickTestBtn);
-            
-            // Add a third button for Firebase rules check
-            const rulesTestBtn = document.createElement('button');
-            rulesTestBtn.textContent = 'Check Firebase Rules';
-            rulesTestBtn.className = 'fixed top-20 right-80 bg-green-600 text-white px-4 py-2 rounded z-50';
-            rulesTestBtn.onclick = checkFirebaseRules;
-            document.body.appendChild(rulesTestBtn);
-        }
-        
-        // Quick vote test function
-        async function quickVoteTest() {
-            console.log('=== QUICK VOTE TEST ===');
-            
-            if (!currentUser) {
-                alert('Please log in first.');
-                return;
-            }
-            
-            if (!db) {
-                alert('Database not available.');
-                return;
-            }
-            
-            try {
-                // Get the first available question
-                const questionsSnapshot = await db.collection('questions').limit(1).get();
-                
-                if (questionsSnapshot.empty) {
-                    alert('No questions available for testing.');
-                    return;
-                }
-                
-                const firstQuestion = questionsSnapshot.docs[0];
-                const questionId = firstQuestion.id;
-                const questionData = firstQuestion.data();
-                
-                console.log('Testing vote on question:', questionId);
-                console.log('Question author:', questionData.authorId);
-                console.log('Current user:', currentUser.uid);
-                
-                if (questionData.authorId === currentUser.uid) {
-                    alert('Cannot test voting on your own question. Please create another question first.');
-                    return;
-                }
-                
-                // Try to vote
-                await handleVote(questionId, 1);
-                console.log('Quick vote test completed');
-                
-            } catch (error) {
-                console.error('Quick vote test failed:', error);
-                alert(`Quick vote test failed: ${error.message}`);
-            }
-        }
-        
-        // Check Firebase security rules
-        async function checkFirebaseRules() {
-            console.log('=== FIREBASE RULES CHECK ===');
-            
-            if (!currentUser || !db) {
-                console.log('❌ User not logged in or database not available');
-                return;
-            }
-            
-            try {
-                // Test read access to questions
-                console.log('Testing read access to questions...');
-                await db.collection('questions').limit(1).get();
-                console.log('✅ Read access to questions: OK');
-                
-                // Test read access to userVotes
-                console.log('Testing read access to userVotes...');
-                await db.collection('userVotes').limit(1).get();
-                console.log('✅ Read access to userVotes: OK');
-                
-                // Test write access to userVotes
-                console.log('Testing write access to userVotes...');
-                const testVoteId = `test_${Date.now()}`;
-                const testVoteData = {
-                    userId: currentUser.uid,
-                    questionId: 'test',
-                    vote: 1,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    isTest: true
-                };
-                
-                await db.collection('userVotes').doc(testVoteId).set(testVoteData);
-                console.log('✅ Write access to userVotes: OK');
-                
-                // Clean up test data
-                await db.collection('userVotes').doc(testVoteId).delete();
-                console.log('✅ Test data cleaned up');
-                
-                // Test update access to questions
-                console.log('Testing update access to questions...');
-                const questionsSnapshot = await db.collection('questions').limit(1).get();
-                if (!questionsSnapshot.empty) {
-                    const questionId = questionsSnapshot.docs[0].id;
-                    const questionRef = db.collection('questions').doc(questionId);
-                    const currentData = (await questionRef.get()).data();
-                    const currentVotes = currentData.votes || 0;
-                    
-                    await questionRef.update({
-                        votes: firebase.firestore.FieldValue.increment(1)
-                    });
-                    console.log('✅ Update access to questions: OK');
-                    
-                    // Restore original value
-                    await questionRef.update({
-                        votes: currentVotes
-                    });
-                    console.log('✅ Question data restored');
-                } else {
-                    console.log('⚠️ No questions available for update test');
-                }
-                
-                console.log('🎉 All Firebase rules tests passed!');
-                alert('Firebase security rules are properly configured!');
-                
-            } catch (error) {
-                console.error('❌ Firebase rules test failed:', error);
-                console.error('Error details:', {
-                    code: error.code,
-                    message: error.message
-                });
-                
-                if (error.code === 'permission-denied') {
-                    alert('❌ Permission denied. Your Firebase security rules need to be updated to allow voting operations.');
-                } else {
-                    alert(`❌ Firebase rules test failed: ${error.message}`);
-                }
-            }
-        }
 
         // Initialize the app
         document.addEventListener('DOMContentLoaded', () => {
@@ -1641,8 +1312,7 @@
                 </div>
             `;
             
-            // Add test button for debugging
-            addTestButton();
+
             
             // Small delay to ensure everything is loaded
             setTimeout(() => {
