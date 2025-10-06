@@ -133,24 +133,6 @@
             .mobile-edit-buttons button {
                 width: 100% !important;
             }
-            .login-tab {
-                transition: all 0.3s ease;
-            }
-            .login-tab.active {
-                background-color: #9b51e0 !important;
-                color: white !important;
-            }
-            .login-tab:not(.active) {
-                background-color: transparent !important;
-                color: #9b51e0 !important;
-                border: 2px solid #9b51e0 !important;
-            }
-            .login-content {
-                display: none;
-            }
-            .login-content.active {
-                display: block;
-            }
         }
     </style>
     <!-- Firebase SDK -->
@@ -381,85 +363,71 @@
                         <h1 class="mobile-title-large text-3xl sm:text-6xl font-extrabold text-[#9b51e0] mb-3 sm:mb-4">PW Student to Student</h1>
                         <p class="text-base sm:text-xl text-gray-300">Connect, Learn, and Grow Together</p>
                     </div>
-                    
-                    <div class="w-full max-w-2xl bg-[#1d0a2d] mobile-section-padding p-6 sm:p-8 rounded-xl shadow-lg border border-gray-700">
-                        <!-- Tab Navigation -->
-                        <div class="flex mb-6 rounded-lg overflow-hidden border border-gray-600">
-                            <button onclick="switchTab('student')" id="student-tab" class="login-tab active flex-1 py-3 px-4 text-center font-medium text-sm sm:text-base">
-                                <div class="flex items-center justify-center space-x-2">
-                                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                                    </svg>
-                                    <span>Student</span>
-                                </div>
-                            </button>
-                            <button onclick="switchTab('admin')" id="admin-tab" class="login-tab flex-1 py-3 px-4 text-center font-medium text-sm sm:text-base">
-                                <div class="flex items-center justify-center space-x-2">
-                                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-                                    </svg>
-                                    <span>Admin</span>
-                                </div>
-                            </button>
-                        </div>
-                        
-                        <!-- Student Login Content -->
-                        <div id="student-content" class="login-content active">
-                            <div class="text-center mb-6">
-                                <div class="w-16 h-16 bg-[#9b51e0] rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                                    </svg>
-                                </div>
-                                <h2 class="text-2xl font-bold text-[#9b51e0] mb-2">Student Login</h2>
-                                <p class="text-gray-400">Ask questions and get answers from seniors</p>
+                    <div class="w-full max-w-2xl">
+                        <div class="bg-[#1d0a2d] mobile-section-padding p-4 sm:p-8 rounded-xl shadow-lg border border-gray-700">
+                            <div class="flex space-x-2 sm:space-x-4 border-b border-gray-700 mb-6">
+                                <button id="tab-student" class="px-3 sm:px-4 py-2 text-sm sm:text-base font-semibold rounded-t-lg bg-[#09030e] text-white border border-b-0 border-gray-700">Student</button>
+                                <button id="tab-admin" class="px-3 sm:px-4 py-2 text-sm sm:text-base font-semibold rounded-t-lg text-gray-300 hover:text-white">Admin</button>
                             </div>
-                            <button onclick="signInWithGoogle('student')" class="w-full bg-[#9b51e0] text-white font-bold py-3 rounded-lg shadow-md hover:bg-[#8545c2] transition-colors duration-300">
-                                Sign in with Google
-                            </button>
-                        </div>
-                        
-                        <!-- Admin Login Content -->
-                        <div id="admin-content" class="login-content">
-                            <div class="text-center mb-6">
-                                <div class="w-16 h-16 bg-[#9b51e0] rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-                                    </svg>
+
+                            <div id="panel-student">
+                                <div class="text-center mb-4 sm:mb-6">
+                                    <div class="w-10 h-10 sm:w-16 sm:h-16 bg-[#9b51e0] rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                                        <svg class="w-5 h-5 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                        </svg>
+                                    </div>
+                                    <h2 class="text-lg sm:text-2xl font-bold text-[#9b51e0]">Student Login</h2>
+                                    <p class="text-xs sm:text-base text-gray-400 mt-1 sm:mt-2">Ask questions and get answers from seniors</p>
                                 </div>
-                                <h2 class="text-2xl font-bold text-[#9b51e0] mb-2">Admin Login</h2>
-                                <p class="text-gray-400">Answer questions and mentor students</p>
-                                <p class="text-xs text-yellow-400 mt-2">⚠️ Admin access is restricted to authorized users only</p>
+                                <button onclick="signInWithGoogle('student')" class="w-full bg-[#9b51e0] text-white font-bold py-2 sm:py-3 rounded-lg shadow-md hover:bg-[#8545c2] transition-colors duration-300">
+                                    Sign in with Google
+                                </button>
                             </div>
-                            <button onclick="signInWithGoogle('admin')" class="w-full bg-[#9b51e0] text-white font-bold py-3 rounded-lg shadow-md hover:bg-[#8545c2] transition-colors duration-300">
-                                Sign in with Google
-                            </button>
+
+                            <div id="panel-admin" class="hidden">
+                                <div class="text-center mb-4 sm:mb-6">
+                                    <div class="w-10 h-10 sm:w-16 sm:h-16 bg-[#9b51e0] rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                                        <svg class="w-5 h-5 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                                        </svg>
+                                    </div>
+                                    <h2 class="text-lg sm:text-2xl font-bold text-[#9b51e0]">Admin Login</h2>
+                                    <p class="text-xs sm:text-base text-gray-400 mt-1 sm:mt-2">Answer questions and mentor students</p>
+                                </div>
+                                <button onclick="signInWithGoogle('admin')" class="w-full bg-[#9b51e0] text-white font-bold py-2 sm:py-3 rounded-lg shadow-md hover:bg-[#8545c2] transition-colors duration-300">
+                                    Sign in with Google
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             `;
-        }
+            // Tab switching logic
+            const tabStudent = document.getElementById('tab-student');
+            const tabAdmin = document.getElementById('tab-admin');
+            const panelStudent = document.getElementById('panel-student');
+            const panelAdmin = document.getElementById('panel-admin');
 
-        // Switch between login tabs
-        function switchTab(tab) {
-            // Update tab buttons
-            document.getElementById('student-tab').classList.remove('active');
-            document.getElementById('admin-tab').classList.remove('active');
-            document.getElementById(`${tab}-tab`).classList.add('active');
-            
-            // Update content
-            document.getElementById('student-content').classList.remove('active');
-            document.getElementById('admin-content').classList.remove('active');
-            document.getElementById(`${tab}-content`).classList.add('active');
-        }
+            const activateStudent = () => {
+                panelStudent.classList.remove('hidden');
+                panelAdmin.classList.add('hidden');
+                tabStudent.classList.add('bg-[#09030e]', 'text-white', 'border', 'border-b-0', 'border-gray-700');
+                tabAdmin.classList.remove('bg-[#09030e]', 'text-white', 'border', 'border-b-0', 'border-gray-700');
+                tabAdmin.classList.add('text-gray-300');
+            };
 
-        // List of authorized admin emails
-        const authorizedAdmins = [
-            'admin1@example.com',
-            'admin2@example.com',
-            'admin3@example.com'
-            // Add more admin emails here
-        ];
+            const activateAdmin = () => {
+                panelAdmin.classList.remove('hidden');
+                panelStudent.classList.add('hidden');
+                tabAdmin.classList.add('bg-[#09030e]', 'text-white', 'border', 'border-b-0', 'border-gray-700');
+                tabStudent.classList.remove('bg-[#09030e]', 'text-white', 'border', 'border-b-0', 'border-gray-700');
+                tabStudent.classList.add('text-gray-300');
+            };
+
+            tabStudent.addEventListener('click', activateStudent);
+            tabAdmin.addEventListener('click', activateAdmin);
+        }
 
         // Sign in with Google
         async function signInWithGoogle(role) {
@@ -469,15 +437,6 @@
                 provider.addScope('profile');
                 
                 const result = await auth.signInWithPopup(provider);
-                
-                // Check if user is authorized for admin access
-                if (role === 'admin') {
-                    if (!authorizedAdmins.includes(result.user.email)) {
-                        alert('Access denied. You are not authorized to login as an admin. Please contact the system administrator.');
-                        await auth.signOut();
-                        return;
-                    }
-                }
                 
                 // Save user role to Firestore
                 await db.collection('users').doc(result.user.uid).set({
